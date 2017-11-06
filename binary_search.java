@@ -62,3 +62,26 @@ class Solution {
 	}
 
 }
+
+//Last Position of Target
+
+/*
+Keep an eye on boundry check to avoid dead loop.
+*/
+
+class Solution {
+	public int binarySearch(int[] nums, int target) {
+		int l = 0, r = nums.length - 1;
+		while (l + 1 < r) { //to avoid dead loop
+			int m = l + (r - l) / 2;
+			if(nums[m] > target) {
+				r = m;
+			}else {
+				l = m;
+			}
+		}
+		if(nums[l] == target) return l;
+		else if(nums[r] == target) return r;
+		return -1;
+	}
+}
