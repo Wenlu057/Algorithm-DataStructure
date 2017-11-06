@@ -37,3 +37,28 @@ class BinarySearch {
 	    return -1;
 	}
 } 
+
+
+// First Position of Target
+/*
+For a given sorted array and a target number, find the first index of this number in O(logn)
+*/
+
+class Solution {
+	public int binarySearch(int[] nums, int target) {
+		int l = 0, r = nums.length - 1; // be careful about the index of last element
+		while( l < r) { // be careful about dead loop
+			int m = l + (r - l) / 2; // be careful about how to assign middle index
+			if(nums[m] < target) {
+				l = m + 1;
+			} else if (nums[m] > target) {
+				r = m - 1;
+			} else {
+				r = m;
+			}
+		}
+		if (nums[l] == target) return l; // check return status
+		return -1;
+	}
+
+}
