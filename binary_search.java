@@ -85,3 +85,68 @@ class Solution {
 		return -1;
 	}
 }
+
+// Don't put the return statement within the while loop
+
+// Search a 2D Matrix
+/* 
+Method 1 : find the correct row using binary search, then find
+the correct element using binary search. 
+Method 2: treat the 2D matrix as 1d array, use the binary search
+to find the target element.
+ */
+
+class Solution {
+	public boolean searchMatrix(int[][] matrix, int target) {
+		if(matrix.length == 0 || matrix[0].length == 0) return false;
+		int start = 0, end = matrix.length * matrix[0].length - 1;
+		int index = matrix[0].length;
+		while(start + 1 < end){
+			int middle = start + (end - start) / 2;
+			if(matrix[middle/index][middle%index] < target) {
+				start = middle;
+			}else {
+				end = middle;
+			}
+		}
+		if(matrix[start/index][start%index] == target || matrix[end/index][end%index] == target) {
+			return true;
+		}
+		return false;
+	}
+}
+
+class Solution {
+	public boolean searchMatrix(int[][] matrix, int target) {
+		if(matrix.length == 0 || matrix[0].length == 0) return false;
+		int rStart = 0, rEnd = matrix.length -1;
+		int cStart = 0, cEnd = matrix[0].length - 1;
+		//first binary search 
+		while(rStart + 1 < rEnd) {
+			int rMid = rStart + (rEnd - rStart) / 2;
+			if(matrix[rMid][0] < target) {
+				rStart = rMid;
+			}else{
+				rEnd = rMid;
+			}
+		}
+		if(matrix[rStart][0] == target ||
+			matrix[rEnd][0] == target)
+			return true;
+		int rIndex = matrix[rEnd][0] < target? rEnd : rStart;
+		// second binary search
+		while(cStart + 1 < cEnd) {
+			int cMid = cStart + (cEnd - cStart) / 2;
+			if(matrix[rIndex][cMid] < target){
+				cStart = cMid;
+			}else{
+				cEnd = cMid;
+			}
+		}
+		if(matrix[rIndex][cStart] == target || matrix[rIndex][cEnd] == target){
+			return true;
+		}
+		return false;
+
+	}
+}
