@@ -150,3 +150,59 @@ class Solution {
 
 	}
 }
+
+//find minimum in rotated sorted array
+/*
+first observe the rotated array, the minimux divide the array into half half.
+The first half is ascending order, the second half is ascending order.
+All the values in the second half are less than the values in the first half.
+Use binary search, need to decide the interval. 
+*/
+
+// if we use the first element as the target value
+
+class Solution {
+	public int findMin(int[] nums) {
+		int l = 0, r = nums.length - 1;
+		while(l + 1 < r) {
+			int mid = l + (r - l) / 2;
+			ind first = nums[l];
+			int last = nums[r];
+			// we need check whether the whole array is in ascending order
+			if(first <= nums[mid] && nums[mid] <= nums[last]){
+				//the minimum is the first element
+				r = l;
+			}else{
+				if(nums[mid] < first) {
+					r = mid;
+				}else {
+					l = mid;
+				}
+			}
+
+		}
+		return nums[l] > nums[r] ? nums[r] : nums[l];
+	}
+}
+
+//if we use the last elemnt as the target value
+public class Solution {
+    /*
+     * @param nums: a rotated sorted array
+     * @return: the minimum number in the array
+     */
+    public int findMin(int[] nums) {
+        // write your code here
+        int l = 0, r = nums.length - 1;
+        while(l + 1 < r) {
+            int mid = l + (r - l) / 2;
+            int last = nums[r];
+            if(nums[mid] < last) {
+                r = mid;
+            }else{
+                l = mid;
+            }
+        }
+        return nums[l] < nums[r] ? nums[l]:nums[r];
+    }
+}
