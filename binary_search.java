@@ -153,11 +153,11 @@ class Solution {
 
 //find minimum in rotated sorted array
 /*
-first observe the rotated array, the minimux divide the array into half half.
-The first half is ascending order, the second half is ascending order.
-All the values in the second half are less than the values in the first half.
-Use binary search, need to decide the interval. 
-*/
+ *first observe the rotated array, the minimum divides the array into half half.
+ *The first half is ascending order, the second half is ascending order.
+ *All the values in the second half are less than the values in the first half.
+ *Use binary search, need to decide the interval. 
+ */
 
 // if we use the first element as the target value
 
@@ -251,3 +251,70 @@ public class Solution {
         return -1;
     }
 }
+/* Frequent Binary Search Problems */
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Pow(x, n)
+/*
+ * use recursion, but also dynamic programming to save the intermediate result. otherwise stack overflow 
+ * occurs. 
+ * also be careful about negative n, and whether n is odd, or even.
+ */
+ public class Solution {
+    /*
+     * @param x: the base number
+     * @param n: the power number
+     * @return: the result
+     */
+    public double myPow(double x, int n) {
+        // write your code here
+        if(x == 0) return 0;
+        if(n == 0) return 1;
+        if(n == 1) return x;
+        if(n == -1) return 1/x;
+        double half = myPow(x, n/2);
+        if(n % 2 == 0) return half*half;
+        else if(n > 0) return half * half * x;
+             else return half*half/x;
+    }
+}
+
+//Search in Roatated Sorted Array
+/*
+ * the roatated sorted array have two parts, the first half and second half is ascending.
+ * all the elements in second half  are less than elements in the first half.
+ * don't forget the case which the target is either the first elemnt or the last one.
+ */
+
+ public class Solution {
+    /*
+     * @param A: an integer rotated sorted array
+     * @param target: an integer to be searched
+     * @return: an integer
+     */
+    public int search(int[] A, int target) {
+        // write your code here
+        if(A.length == 0) return -1;
+        int l = 0, r = A.length - 1;
+        while(l + 1 < r) {
+            int mid = l + (r - l) / 2;
+            if(A[mid] < A[r]) { //the middle point is in the second half
+                if(A[mid] < target && target <= A[r]) {
+                    l = mid; // in which case, we can discard all elements before middle point?
+                }else{
+                    r = mid;
+                }
+            }else{
+                if(A[mid] > target && target >= A[l]) {
+                    r= mid;
+                }else{
+                    l = mid;
+                }
+                
+            }
+        }
+        if(target == A[l]) return l;
+        if(target == A[r]) return r;
+        return -1;
+    }
+} 
