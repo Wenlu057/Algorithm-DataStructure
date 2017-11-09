@@ -317,4 +317,69 @@ public class Solution {
         if(target == A[r]) return r;
         return -1;
     }
-} 
+
+  // Sqrt(x)
+  /*
+   * be careful if square value out of Intger maximum bound.
+   * use mid > x/mid instead of mid * mid > x to avoid the above issue.
+   */
+   public class Solution {
+    /*
+     * @param x: An integer
+     * @return: The sqrt of x
+     */
+    public int sqrt(int x) {
+        if (x == 0) return 0;
+        int l = 1, r = x / 2;
+        while (l + 1 < r) {
+            int mid = l + (r - l)/2;
+            if (mid > x/mid) {
+                r = mid;
+            } else {
+                l = mid ;
+            }
+        }
+        System.out.println(l);
+        if(l+1 > x/(l + 1)) return l;
+        else return r;
+        
+    }
+  // divide two integers
+
+  /*
+   * cannot use multiplication, division and mod operator.
+   * then only bitwise operation is available.
+   * try to find n times divisor which is the closest to dividend,
+   * which n is a multiple of two. 
+   * repeate the above step and accumulate n to get the answer.
+   * /
+
+  /*
+   * Notes:
+   * num << i means num multiply i times 2
+   */
+
+  class Solution {
+  	public int divide (int dividend, int divisor) {
+  		//handle special cases
+  		if(divisor == 0) return Intger.MAX_VALUE;
+  		if(divisor == -1 && dividend == Integer.MIN_VALUE) return Integer.MAX_VALUE;
+  		//get positive values
+  		long pDividend = Math.abs((long)dividend);
+  		long pDivisor = Math.abs((long)divisor);
+  		int result = 0;
+  		while(pDividend >= pDivisor){
+  			int numShift = 0;
+  			while(pDividend >= (pDivisor << numShift)){
+  				numShift++;
+  			}
+  			result += 1 << (numShift - 1);
+  			pDividend -= (pDivisor<<(numShift - 1));
+  		}
+  		if((dividend>0 && divisor>0) || (dividend<0 && divisor<0)){
+            return result;
+        }else{
+            return -result;
+        }
+  	}
+  }
