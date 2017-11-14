@@ -383,3 +383,67 @@ public class Solution {
         }
   	}
   }
+  //First Bad Version
+  /*
+   *similar with first position of target.
+   */
+  /**
+    * public class SVNRepo {
+    *     public static boolean isBadVersion(int k);
+    * }
+    * you can use SVNRepo.isBadVersion(k) to judge whether 
+    * the kth code version is bad or not.
+  */
+
+  public class Solution {
+    /*
+     * @param n: An integer
+     * @return: An integer which is the first bad version.
+     */
+    public int findFirstBadVersion(int n) {
+        // write your code here
+        int l = 1, r = n;
+        while( l + 1 < r) {
+            int mid = l + (r - l) / 2;
+            if(SVNRepo.isBadVersion(mid)== true){
+                r = mid;
+            }else{
+                l = mid;
+            }
+        }
+        return SVNRepo.isBadVersion(l)==true ? l: r;
+    }
+  }
+
+  //Search Insert Position
+  /*
+   *If the target is not found, need to determine the insert position.
+   *When we exit from the loop, there are 3 cases, in the left, in ther middle, in ther right
+   *Write return statement for each case.
+   */ 
+
+  public class Solution {
+    /*
+     * @param A: an integer sorted array
+     * @param target: an integer to be inserted
+     * @return: An integer
+     */
+    public int searchInsert(int[] A, int target) {
+        // write your code here
+        if(A.length == 0) return 0;
+        int l = 0, r = A.length - 1;
+        while(l + 1 < r) {
+            int mid = l + (r - l) / 2;
+            if(A[mid] == target) return mid;
+            if(A[mid] < target) {
+                l = mid;
+            }else{
+                r = mid;
+            }
+        }
+        if(target <= A[l] ) return l;
+        else if(target > A[l] && target <= A[r]) return r;
+            else return r + 1;
+        
+    }
+  }
