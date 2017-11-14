@@ -447,3 +447,114 @@ public class Solution {
         
     }
   }
+
+  //Search for a Range
+  /*
+   * Combination problem of first target postion and last target position.
+   * no need to run binary search twice, first we use binary search to find 
+   * the first position, and then iterate until we find the index right after 
+   * the last element. 
+   */
+  public class Solution {
+    /*
+     * @param A: an integer sorted array
+     * @param target: an integer to be inserted
+     * @return: a list of length 2, [index1, index2]
+     */
+    public int[] searchRange(int[] A, int target) {
+        // write your code here
+        if(A.length == 0) return new int[]{-1,-1};
+        int l = 0, r = A.length - 1;
+        while(l + 1 < r) {
+            int mid = l + (r - l) / 2;
+            if(A[mid] < target) {
+                l = mid;
+            }else{
+                r = mid;
+            }
+        }
+        if(A[l] != target && A[r] != target) return new int[]{-1, -1};
+        int end = r;
+        while(end < A.length && A[end] == target) {
+                end++;
+        }
+        int start = A[l] == target? l:r;
+        return new int[]{start,end-1};
+    }
+  }
+  //Search in Rotated Sorted Array II
+  /*
+   *Compare with the basic question. This follow up question needs to 
+   *consider the following case and how to deal with it.
+   *nums[start] == nums[mid] == nums[end]
+   *We can remove duplicate from one side once at a time, or remove
+   *all the duplicates from both left and right.
+   */
+  public class Solution {
+    /*
+     * @param A: an integer ratated sorted array and duplicates are allowed
+     * @param target: An integer
+     * @return: a boolean 
+     */
+    public boolean search(int[] A, int target) {
+        // write your code here
+        if(A.length == 0) return false;
+        int l = 0, r = A.length - 1;
+        while(l + 1 < r) {
+            int mid = l + (r - l) / 2;
+            // if (A[l] == target || A[r] == target) return true; //it may remove compare time
+            // if(A[l] == A[r]) {
+            //     int val = A[l];
+            //     while(l + 1 < r && A[l] == val) l++;
+            //     while(l + 1 < r && A[r] == val) r--;
+            // } // remove all the duplicates from left and right sides
+            if (A[mid] > A[l]) {
+                if(A[l] < target && target < A[mid] ){
+                    r = mid;
+                }else{
+                    l = mid;
+                }
+            }else if(A[mid] < A[r]){
+                if(A[mid] < target && target < A[r]) {
+                    l = mid;
+                }else{
+                    r = mid;
+                }
+            }else{
+                l++; // remove one duplicate from left, r-- also works
+            }
+        }
+        if(A[l] == target || A[r] == target) return true;
+        else return false;
+    }
+  }
+
+  //Find Minimum in Rotated Sorted Array II
+  /*
+   * Same as above, be careful about nums[start] == nums[mid] == nums[end]
+   * For this question, we cannot remove from start, it will elliminate the
+   * minimum value from candidacy. 
+   */
+
+  public class Solution {
+    /*
+     * @param nums: a rotated sorted array
+     * @return: the minimum number in the array
+     */
+    public int findMin(int[] nums) {
+        // write your code here
+        if(nums.length == 1) return nums[0];
+        int l = 0, r = nums.length - 1;
+        while(l + 1 < r) {
+            int mid = l + (r - l) / 2;
+            if(nums[mid] > nums[r]){
+                l = mid;
+            }else if (nums[mid] < nums[r]){
+                r = mid;
+            }else{
+                r--;
+            }
+        }
+        return nums[l] < nums[r] ? nums[l] : nums[r];
+    }
+  }
