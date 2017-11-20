@@ -617,3 +617,160 @@ public class Solution {
         return num;
     }
   }
+
+
+  // Classical Binary Search
+  /*
+   * Binary Search template
+   */
+  public class Solution {
+    /*
+     * @param nums: An integer array sorted in ascending order
+     * @param target: An integer
+     * @return: An integer
+     */
+    public int findPosition(int[] nums, int target) {
+        // write your code here
+        if(nums.length == 0) return -1;
+        int l = 0, r = nums.length - 1;
+        while(l + 1 < r) {
+            int mid = l + (r - l) / 2;
+            if(nums[mid] == target) return mid;
+            if(nums[mid] < target) {
+                l = mid;
+            }else{
+                r = mid;
+            }
+        }
+        if(nums[l] == target) return l;
+        if(nums[r] == target) return r;
+        return -1;
+    }
+  }
+
+  //Intersection of Two Arrays
+  /*
+   * two ways to implement. 
+   * approach 1 : use hashmap to remove duplicate, use another hashmap to record the result.
+   * approach 2 : sort the array, then use binary search in array 1,  use ArrayList to record the result.
+   * How to iterate the list/hashmap
+   */
+
+    /*First approach*/
+    public class Solution {
+    
+    /*
+     * @param nums1: an integer array
+     * @param nums2: an integer array
+     * @return: an integer array
+     */
+    public int[] intersection(int[] nums1, int[] nums2){
+        HashMap<Integer, Boolean> map1 = new HashMap<>();
+        HashMap<Integer, Boolean> intersectMap = new HashMap<>();
+        for(int i = 0; i < nums1.length; i++) {
+            if(!map1.containsKey(nums1[i])){
+                map1.put(nums1[i], true);
+            }
+        }
+        for(int j = 0; j < nums2.length; j++) {
+            if(map1.containsKey(nums2[j]) && !intersectMap.containsKey(nums2[j])){
+                intersectMap.put(nums2[j], true);
+            }
+        }
+        int[] res = new int[intersectMap.size()];
+        int i = 0;
+        for(int e : intersectMap.keySet()){
+            res[i] = e;
+            i++;
+        }
+        return res;
+    }
+  };
+  /*Second approach*/
+  public class Solution {
+    
+    /*
+     * @param nums1: an integer array
+     * @param nums2: an integer array
+     * @return: an integer array
+     */
+    public int[] intersection(int[] nums1, int[] nums2) {
+        // write your code here
+        Arrays.sort(nums1);
+        if(nums1.length == 0 || nums2.length == 0) return new int[]{};
+        List<Integer> res = new ArrayList<>();
+        for(int i = 0; i < nums2.length; i++) {
+            if(binarySearch(nums1, nums2[i])){
+                if(!res.contains(nums2[i])){
+                    res.add(nums2[i]);
+                }
+            }
+        }
+        int[] arr = new int[res.size()];
+        for(int i = 0; i < res.size(); i++){
+            arr[i] = res.get(i);
+        }
+        return arr;
+    }
+    public boolean binarySearch(int[] nums, int num){
+        int l = 0, r = nums.length - 1;
+        while(l + 1 < r){
+            int mid = l + (r - l) / 2;
+            if(nums[mid] == num) return true;
+            if(nums[mid] < num) l = mid;
+            else r = mid;
+        }
+        if(nums[l] == num || nums[r] == num) return true;
+        return false;
+    }
+};
+
+// Intersection of Two Arrays II
+/*
+ * Use hashmap to save nums1 and result, record the times it appears in nums1
+ */
+public class Solution {
+    
+    /*
+     * @param nums1: an integer array
+     * @param nums2: an integer array
+     * @return: an integer array
+     */
+    public int[] intersection(int[] nums1, int[] nums2) {
+        // write your code here
+        if(nums1.length == 0 || nums2.length == 0) return new int[]{};
+        HashMap<Integer, Integer> map1 = new HashMap<>();
+        HashMap<Integer, Integer> intersectMap = new HashMap<>();
+        List<Integer> ls = new ArrayList<>();
+        for(int i = 0; i < nums1.length; i++) {
+            if(!map1.containsKey(nums1[i])){
+                map1.put(nums1[i], 1);
+            }else{
+                map1.put(nums1[i], map1.get(nums1[i]) + 1);
+            }
+        }
+        for(int j = 0; j < nums2.length; j++) {
+            if(map1.containsKey(nums2[j]) && map1.get(nums2[j]) > 0){
+                map1.put(nums2[j], map1.get(nums2[j]) - 1);
+                if (!intersectMap.containsKey(nums2[j])) {
+                    intersectMap.put(nums2[j], 1);
+                } else {
+                    intersectMap.put(nums2[j], intersectMap.get(nums2[j]) + 1);
+                }
+            }
+        }
+        int sum = 0;
+        for(int e : intersectMap.keySet()){
+            int count = intersectMap.get(e);
+            sum += count;
+            for(int i = 0; i < count; i++){
+                ls.add(e);
+            }
+        }
+        int[] res = new int[sum];
+        for(int i = 0; i < ls.size(); i++){
+            res[i] = ls.get(i);
+        }
+        return res;
+    }
+};
