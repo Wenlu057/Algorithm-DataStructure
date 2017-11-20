@@ -558,3 +558,62 @@ public class Solution {
         return nums[l] < nums[r] ? nums[l] : nums[r];
     }
   }
+
+  // Wood Cut
+  /*
+   * If the length of one piece of wook is less than the maximum length, we can discard it.
+   * We only need to guarantee  that we have equal or more than k pieces of wood with maximum length.
+   * We can use O(n) time to find the maximum in these n pieces of wood. We know that the overall maximum is
+   * greater than the desired maximum length. Then we use the binary search to find the correct answer.
+   * Be caueful about the boundry value.
+   * You need to calculate the total pieces which satisfy the requirment in every check. 
+   */
+
+  public class Solution {
+    /*
+     * @param L: Given n pieces of wood with length L[i]
+     * @param k: An integer
+     * @return: The maximum length of the small pieces
+     */
+    public int woodCut(int[] L, int k) {
+        // write your code here
+        int result = 0;
+        int maxNum = Integer.MAX_VALUE;
+        // find the maxNum 
+        for(int i = 0; i < L.length; i++) {
+            if(L[i] > maxNum) maxNum = L[i];
+        }
+        result = binarySearch(L, k, maxNum );
+        return result;
+
+    }
+    public int binarySearch(int[] L, int k, int maxNum){
+        int maxLen = 0;
+        int l = 0, r = maxNum;
+        while(l + 1 < r) {
+            int mid = l + (r - l) / 2;
+            int num = checkValidity(mid, L);
+            if(num >= k){
+                l = mid;
+                if(mid > maxLen) maxLen = mid;
+            }else{
+                r = mid;
+            }
+            
+        }
+        if(checkValidity(r,L) >= k && r > maxLen) return r;
+        // be careful if l is equal to 0
+        if(l!=0){
+            if(checkValidity(l,L) >= k && l > maxLen) return l;
+        }
+        return maxLen;
+    }
+    // calculate the total pieces of wood which length is equal to the first passing argument 
+    public int checkValidity(int length, int[] L) {
+        int num = 0;
+        for(int i = 0; i < L.length; i++) {
+           num += L[i] / length;
+        }
+        return num;
+    }
+  }
