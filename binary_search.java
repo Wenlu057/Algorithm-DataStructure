@@ -774,3 +774,61 @@ public class Solution {
         return res;
     }
 };
+
+//Maximum Average Subarray
+/*
+ *key points:
+ *1, use a double array to save the sum of difference with expected average value for each element
+ *2, the difference of i th sum of difference and j th sum of difference
+ *3, the length should be greater or equal to given length k
+ *4, the average value is between the lowest and highest value in the array
+ *5, binary search to find the maximum average
+ */
+
+public class Solution {
+    /*
+     * @param nums: an array with positive and negative numbers
+     * @param k: an integer
+     * @return: the maximum average
+     */
+    public double maxAverage(int[] nums, int k) {
+        // write your code here
+        double high = Integer.MIN_VALUE;
+        double low = Integer.MAX_VALUE;
+        for(int i = 0; i < nums.length; i++) {
+            if(nums[i] > high) {
+                high = nums[i];
+            }
+            if(nums[i] < low){
+                low = nums[i];
+            }
+        }
+        while(high - low >= 1e-6) {
+            double mid = low + (high - low) / 2;
+            if(search(nums, k, mid)){
+                low = mid;
+            }else{
+                high = mid;
+            }
+        }
+        return high;
+    }
+    
+    public boolean search(int[] nums, int k, double mid) {
+        double min = 0;
+        double[] sum = new double[nums.length + 1];
+        sum[0] = 0;
+        for(int i = 1; i <= nums.length; i++){
+            sum[i] = sum[i - 1] + nums[i - 1] - mid; // add the diffrence with mid for each element
+            //guarantee the length of the subarray is no less than k 
+            if(i >= k && sum[i] >= min) {
+                return true;
+            }
+            // decide whether to add elements before previous k elements                                                        
+            if(i >= k){
+                min = Math.min(min, sum[i - k + 1]);
+            }
+        }
+        return false;
+    }
+}
