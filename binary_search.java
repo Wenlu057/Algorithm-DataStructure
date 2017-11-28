@@ -832,3 +832,70 @@ public class Solution {
         return false;
     }
 }
+// Guess Number Game
+/*
+ * easy binary search
+ */
+
+/* The guess API is defined in the parent class GuessGame.
+   @param num, your guess
+   @return -1 if my number is lower, 1 if my number is higher, otherwise return 0
+      int guess(int num); */
+
+public class Solution extends GuessGame {
+    /**
+     * @param n an integer
+     * @return the number you guess
+     */
+    public int guessNumber(int n) {
+        // Write your code here
+        int l = 1, r = n;
+        while(l + 1 < r) {
+            int mid = l + (r - l) / 2;
+            int res = guess(mid);
+            if(res == 0) return mid;
+            if(res < 0) {
+                r = mid;
+            }
+            if(res > 0) {
+                l = mid;
+            }
+        }
+        if(guess(l) == 0) return l;
+        if(guess(r) == 0) return r;
+        return -1;
+    }
+}
+
+// Find the Duplicate Number
+/*
+ * Count how many times the number is less than the middle.
+ * We cannot modify the array, so sort is not allowed.
+ * We cannot use extra space, so hash table is not allowed.
+ * The time complexily must be less than O(n*n), so we shall consider binary search
+ * We search in range [1, n], count and judge which part to be discarded.
+ */
+
+public class Solution {
+    /*
+     * @param nums: an array containing n + 1 integers which is between 1 and n
+     * @return: the duplicate one
+     */
+    public int findDuplicate(int[] nums) {
+        // write your code here
+
+        int l = 1, r = nums.length - 1;
+        while(l < r) {
+            int mid = l +(r - l) / 2;
+            int count = 0;
+            for(int i = 0; i < nums.length; i++) {
+                if(nums[i] <= mid)
+                    count ++;
+            }
+            if(count <= mid) l = mid + 1;
+            else r = mid;
+        }
+        return l;
+    }
+}
+
