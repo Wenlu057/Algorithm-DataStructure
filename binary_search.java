@@ -166,7 +166,7 @@ class Solution {
 		int l = 0, r = nums.length - 1;
 		while(l + 1 < r) {
 			int mid = l + (r - l) / 2;
-			ind first = nums[l];
+			int  first = nums[l];
 			int last = nums[r];
 			// we need check whether the whole array is in ascending order
 			if(first <= nums[mid] && nums[mid] <= nums[last]){
@@ -285,7 +285,7 @@ public class Solution {
  * all the elements in second half  are less than elements in the first half.
  * don't forget the case which the target is either the first elemnt or the last one.
  */
-
+//first determine the position of the middle point, then determine the position of target
  public class Solution {
     /*
      * @param A: an integer rotated sorted array
