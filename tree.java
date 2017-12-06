@@ -110,3 +110,56 @@ public class Solution {
         return left > right? left + 1 : right + 1;
     }
 }
+
+// Balanced Binary Tree
+/*
+ * Build ResultType with depth and isBalanced.
+ * Divide and Conquer
+ */
+class Solution {
+	public boolean isBalanced(TreeNode root) {
+		if(root == null) return true;
+		ResultType rs = helper(root);
+		return rs.balanced;
+	}
+	public ResultType helper(TreeNode root) {
+		if (root == null) return new ResultType(0, true);
+		ResultType left = helper(root.left);
+		ResultType right = helper(root.right);
+		int depth = Math.max(left.depth, right.depth) + 1;
+		boolean balanced = left.balanced && right.balanced && (Math.abs(left.depth - right.depth) <= 1);
+		return new ResultType(depth, balanced);
+	}
+}
+
+class ResultType {
+	int depth;
+	boolean balanced;
+	ResultType(int d, boolean b) {
+		depth = d;
+		balanced = b;
+	}
+}
+
+/*
+ * Use -1 to represent it's not balanced
+ */
+
+class Solution {
+	public boolean isBalanced(TreeNode root) {
+		if(root == null) return true;
+		if (isBalanced(root) == -1 ) return false;
+		else return true;
+
+	}
+	public int helper(TreeNode root) {
+		if (root == null) return 0;
+		int left = helper(root.left);
+		int right = helper(root.right);
+		if(left == -1 || right == -1 || Math.abs(left - right) > 1) {
+			return -1;
+		}else {
+			return Math.max(left, right) + 1;
+		}
+	}
+}
