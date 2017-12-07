@@ -372,4 +372,88 @@ public class Solution {
          return isValidBST(root.right);
          
      }
+} 
+
+//Binary Search Tree Iterator
+//Solution 1 
+/*
+ * Use stack, keep pushing left child into stack,
+ * Pop one node, then push the right child into stack,
+ * keep pushing left child into stack.
+ */
+public class BSTIterator {
+    private Stack<TreeNode> st;
+    /*
+    * @param root: The root of binary tree.
+    */public BSTIterator(TreeNode root) {
+        // do intialization if necessary
+        st = new Stack<TreeNode>();
+        if (root != null) {
+            st.push(root);
+            TreeNode iter = root.left;
+            while (iter != null) {
+                st.push(iter);
+                iter = iter.left;
+            }
+        }
+    }
+
+    /*
+     * @return: True if there has next node, or false
+     */
+    public boolean hasNext() {
+        // write your code here
+        return !st.isEmpty();
+    }
+
+    /*
+     * @return: return next node
+     */
+    public TreeNode next() {
+        // write your code here
+        TreeNode temp = null;
+        if (!st.isEmpty()) {
+            temp = st.pop();
+            TreeNode iter = temp.right;
+            while (iter != null) {
+                st. push(iter);
+                iter = iter.left;
+            }
+        }
+        return temp;
+    }
+}
+
+// Solution 2
+/* Use the queue to store node. Do the in-order traversal*/
+public class BSTIterator {
+    private Queue<TreeNode> res;
+    private void helper(TreeNode root) {
+        if (root == null) return;
+        helper(root.left);
+        res.add(root);
+        helper(root.right);
+    }
+    /*
+    * @param root: The root of binary tree.
+    */public BSTIterator(TreeNode root) {
+        // do intialization if necessary
+        res = new LinkedList<TreeNode>();
+        helper(root);
+    }
+
+    /*
+     * @return: True if there has next node, or false
+     */
+    public boolean hasNext() {
+        // write your code here
+        return !res.isEmpty();
+    }
+
+    /*
+     * @return: return next node
+     */
+    public TreeNode next() {
+        return res.poll();
+    }
 }
