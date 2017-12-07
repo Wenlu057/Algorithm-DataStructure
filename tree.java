@@ -235,10 +235,12 @@ class Solution {
  		return res.maxPath;
  	}
  	public ResultType helper(TreeNode root) {
- 		// ResultType res = new ResultType(Integer.MIN_VALUE, Integer.MIN_VALUE);
+ 		// Use case: (-2, null, null)
  		if (root == null) return new ResultType(0, Integer.MIN_VALUE);
  		ResultType left = helper(root.left);
  		ResultType right = helper(root.right);
+ 		// For the maxPath, need to determine whether we need to add left or right.
+ 		// Use case: (2, -1, null,null,null)
  		int path  = Math.max(0, left.singlePath) + Math.max(0, right.singlePath) + root.val;
  		int single = Math.max(0, Math.max(left.singlePath, right.singlePath)) + root.val;
  		return new ResultType(single, Math.max(path, Math.max(left.maxPath, right.maxPath)));
@@ -257,7 +259,7 @@ class Solution {
  // Solution 2
 
  class Solution {
- 	int max = Integer.MIN_VALUE;
+ 	int max = Integer.MIN_VALUE; //gloable variable for updating maxPathSum
  	public int maxPathSum3(TreeNode root) {
  		helper(root);
  		return max;
@@ -278,3 +280,96 @@ class Solution {
  		return Math.max(0, Math.max(left, right)) + root.val;
  	}
  }
+
+ //Binary Search Tree
+ /*
+  * The left subtree of a node contains only nodes with keys less than the node's key.
+  * The right subtree of a node contains only nodes with keys greater than the node's key.
+  * Both the left and right subtrees must also be binary search trees.
+  * A Single node tree is a BST.
+  */
+
+ //Validate Binary Search Tree
+ /*
+  * Solution 1:
+  * Divide and Conquer
+  * Check whether left subtree is BST, right subtree is BST.
+  * Check the node key matches the condition.
+  * Maintain Min and Max, for the left subtree Max is parent key, 
+  * for the right subtree Min is parent key.
+  */
+ public class Solution {
+    /*
+     * @param root: The root of binary tree.
+     * @return: True if the binary tree is BST, or false
+     */
+    public boolean isValidBST(TreeNode root) {
+        // write your code here
+        return helper(root, Long.MIN_VALUE, Long.MAX_VALUE);
+        
+    }
+    public boolean helper(TreeNode root, long min, long max) {
+        if (root == null) return true;
+        return (root.val < max && root.val > min) &&  helper(root.left, min, root.val) && helper(root.right, root.val, max);
+    }
+}
+
+/*
+ * Solution 2:
+ * Check whether the maximum value in the left subtree is less than the root value.
+ * Check whether the minimum value in the right subtree is greater than the root value.
+ * Traverse the whole tree.
+ */
+
+public class Solution {
+    /*
+     * @param root: The root of binary tree.
+     * @return: True if the binary tree is BST, or false
+     */
+    public boolean isValidBST(TreeNode root) {
+        // write your code here
+        if (root == null) return true;
+        if (root.left == null && root.right == null) return true;
+        TreeNode left = root.left;
+        TreeNode right = root.right;
+        while (left != null && left.right != null) {
+            left = left.right;
+        }
+        while (right != null && right.left != null) {
+            right = right.left;
+        }
+        boolean res = true;
+        if (left != null) {
+            res = res &&  root.val > left.val;
+        }
+        if (right != null) {
+            res = res && root.val < right.val;
+        }
+        return res && isValidBST(root.left) && isValidBST(root.right);
+        
+    }
+}
+
+/*
+ * Solution 3
+ * Example: (4,2,6,1,3,5,7)
+ * The inoder traversal can print treeNode in ascending order if it is BST.
+ * Use a gloable variable to save the previous Node, and contiously compare with current node.
+ * Note: when to return? you can return immediately right after you know the result. 
+ */
+
+public class Solution {
+    /*
+     * @param root: The root of binary tree.
+     * @return: True if the binary tree is BST, or false
+     */
+     TreeNode preNode = null;
+     public boolean isValidBST(TreeNode root) {
+         if (root == null) return true;
+         if (!isValidBST(root.left)) return false;
+         if (preNode != null && preNode.val >= root.val) return false;
+         preNode = root;
+         return isValidBST(root.right);
+         
+     }
+}
