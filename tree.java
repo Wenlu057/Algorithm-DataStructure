@@ -163,3 +163,118 @@ class Solution {
 		}
 	}
 }
+
+//Maximum path sum (root -> leaf)
+/*
+ *Divide and conquer. Divide into two subproblems.
+ *How to use the two sub-answers to combine into the final result.
+ *Be careful about the exit point for recursion(special case).
+ */
+class Solution {
+	public int maxPathSum(TreeNode root) {
+		if (root == null) return 0;
+		int left = maxPathSum(root.left);
+		int right = maxPathSum(root.right);
+		return Math.max(left, right) + root.val;
+	}
+}
+
+//Path sum(root -> leaf)
+
+/*
+ determine if the tree has a root-to-leaf path 
+ such that adding up all the values along the 
+ path equals the given sum.
+ */
+
+ /*
+  * The return type is boolean.  How to construct
+  * two sub-problems?  Substract the root value from
+  * target value each time down one level.
+  * Need to consider two special cases :
+  * 1, no node. 2, leaf node
+  */
+
+ class Solution {
+ 	public boolean hasPathSum(TreeNode root, int sum) {
+ 		if (root == null) return false;
+ 		if (root.left == null && root.right == null) return root.val == sum;
+ 		return hasPathSum(root.left, sum -root.val) 
+ 			|| hasPathSum(root.right, sum - root.val); 
+ 	}
+ }
+
+ //Maximum path sum ii (root -> any)
+
+ /*
+  * One more step: determine whether we need to add sub-tree value.
+  * Divide and conquer, first get the two sub-results and then do relative logic check.
+  */
+
+ class Solution {
+ 	public int maxPathSum2(TreeNode root) {
+ 		if (root == null) return 0;
+ 		int left = maxPathSum2(root.left);
+ 		int right = maxPathSum2(root.right);
+ 		return Math.max(0, Math.max(left,right)) + root.val;
+ 	}
+ }
+
+ //Maximum path sum iii (any -> any)
+
+ /*
+  * Treat each node as an independent node and calculate 
+  * which node has the maxPathSum.
+  * In the recursion, we need to track the maximum single path(root -> any)
+  * We need use another variable to track the maximum path (any -> any)
+  */
+
+ class Solution {
+ 	public int maxPathSum3(TreeNode root) {
+ 		ResultType res = helper(root);
+ 		return res.maxPath;
+ 	}
+ 	public ResultType helper(TreeNode root) {
+ 		// ResultType res = new ResultType(Integer.MIN_VALUE, Integer.MIN_VALUE);
+ 		if (root == null) return new ResultType(0, Integer.MIN_VALUE);
+ 		ResultType left = helper(root.left);
+ 		ResultType right = helper(root.right);
+ 		int path  = Math.max(0, left.singlePath) + Math.max(0, right.singlePath) + root.val;
+ 		int single = Math.max(0, Math.max(left.singlePath, right.singlePath)) + root.val;
+ 		return new ResultType(single, Math.max(path, Math.max(left.maxPath, right.maxPath)));
+ 	}
+ }
+
+ class ResultType {
+ 	int singlePath;
+ 	int maxPath;
+ 	ResultType (int singlePath, int maxPath) {
+ 		this.singlePath = singlePath;
+ 		this.maxPath = maxPath;
+ 	}
+ }
+
+ // Solution 2
+
+ class Solution {
+ 	int max = Integer.MIN_VALUE;
+ 	public int maxPathSum3(TreeNode root) {
+ 		helper(root);
+ 		return max;
+ 	}
+
+ 	public int helper(TreeNode root) {
+ 		if(root == null) return 0;
+ 		int left = maxPathSum3(root.left);
+ 		int right = maxPathSum3(root.right);
+ 		int maxPath = root.val;
+ 		if (left > 0) {
+ 			maxPath += left;
+ 		}
+ 		if (right > 0) {
+ 			maxPath += right;
+ 		}
+ 		max = Math.max(maxPath, max);
+ 		return Math.max(0, Math.max(left, right)) + root.val;
+ 	}
+ }
