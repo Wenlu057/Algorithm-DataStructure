@@ -457,3 +457,41 @@ public class BSTIterator {
         return res.poll();
     }
 }
+
+//Binary Tree Level Order Traversal
+/*
+ * Be careful to choose the right data structure. 
+ * Queue? Stack?
+ * How to record the size of each level?
+ */
+public class Solution {
+    /*
+     * @param root: A Tree
+     * @return: Level order a list of lists of integer
+     */
+    public List<List<Integer>> levelOrder(TreeNode root) {
+        // write your code here
+    	List<List<Integer> res = new ArrayList<>();
+    	Queue<TreeNode> q = new LinkedList<>();
+    	if (root == null) return res;
+    	q.add(root);
+    	int size = 1;
+    	while (!q.isEmpty()) {
+    		List<Integer> ls = new ArrayList<>();
+    		for (int i = 0; i < size; i++) {
+    			TreeNode temp = q.poll();
+    			ls.add(temp.val);
+    			if (temp.left != null) {
+    				q.add(temp.left);
+    			}
+    			if (temp.right != null) {
+    				q.add(temp.right);
+    			}
+    		}
+    		res.add(ls);
+    		size = q.size();
+    	}
+    	return res;
+    }
+
+}
