@@ -537,3 +537,101 @@ public class Solution {
         else return 1 + Math.min(minDepth(root.left), minDepth(root.right));
     }
 }
+
+// Binary Tree Inorder Traversal
+
+/*Traversal in recursion*/
+public class Solution {
+    /*
+     * @param root: A Tree
+     * @return: Inorder in ArrayList which contains node values.
+     */
+    public List<Integer> inorderTraversal(TreeNode root) {
+        // write your code here
+        List<Integer> res = new ArrayList<>();
+        if (root == null) return res;
+        help(root, res);
+        return res;
+    }
+    public void help (TreeNode root, List<Integer> res) {
+        if (root == null) return;
+        help(root.left, res);
+        res.add(root.val);
+        help(root.right, res);
+    }
+}
+
+/*Divide and Conquer*/
+public class Solution {
+    /*
+     * @param root: A Tree
+     * @return: Inorder in ArrayList which contains node values.
+     */    
+    public List<Integer> inorderTraversal(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        if (root == null) return res;
+        List<Integer> left = inorderTraversal(root.left);
+        List<Integer> right = inorderTraversal(root.right);
+        res.addAll(left);
+        res.add(root.val);
+        res.addAll(right);
+        return res;
+    }
+}
+
+/*Non recursion using stack*/
+public class Solution {
+    /*
+     * @param root: A Tree
+     * @return: Inorder in ArrayList which contains node values.
+     */
+    public List<Integer> inorderTraversal(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        Stack<TreeNode> st = new Stack<>();
+        if (root == null) return res;
+        st.push(root);
+        TreeNode left = root.left;
+        while (left != null) {
+            st.push(left);
+            left = left.left;
+        }
+        while (!st.isEmpty()) {
+            TreeNode temp = st.pop();
+            res.add(temp.val);
+            if (temp.right != null) {
+                TreeNode right = temp.right;
+                while (right != null) {
+                    st.push(right);
+                    right = right.left;
+                }
+            }
+        }
+        return
+    }
+}
+
+//Lowest Common Ancestor
+/*
+ * Divide and Conquer
+ * If we find node A or node B, return it
+ * If A, B are found in sepearte subtree, the root is the LCA
+ * else one node is the ancestor of the other.
+ */
+public class Solution {
+    /*
+     * @param root: The root of the binary search tree.
+     * @param A: A TreeNode in a Binary.
+     * @param B: A TreeNode in a Binary.
+     * @return: Return the least common ancestor(LCA) of the two nodes.
+     */
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode A, TreeNode B) {
+        // write your code here
+        if (root == null) return null;
+        if (root == A || root == B) return root;
+        TreeNode left = lowestCommonAncestor(root.left, A, B);
+        TreeNode right = lowestCommonAncestor(root.right, A, B);
+        return left != null ? (right != null? root : left) : right;
+        
+    }
+}
+
