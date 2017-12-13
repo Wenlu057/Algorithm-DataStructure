@@ -495,3 +495,45 @@ public class Solution {
     }
 
 }
+
+/*-------------Extra Binary Tree Problems----------------------------*/
+
+// Identical Binary Tree
+/*
+ * Divide and conquer
+ * Check if left-subtrees are identical, right subtrees are identical
+ * Check if root values are identical
+ */
+public class Solution {
+    /*
+     * @param a: the root of binary tree a.
+     * @param b: the root of binary tree b.
+     * @return: true if they are identical, or false.
+     */
+    public boolean isIdentical(TreeNode a, TreeNode b) {
+        // write your code here
+        if (a == null && b == null) return true;
+        else if (a == null || b == null) return false;
+        if (a.val != b.val) return false;
+        return isIdentical(a.left, b.left) && isIdentical(a.right, b.right);
+    }
+}
+
+// Minimum Depth of Binary Tree
+/*
+ * If the one subtree is null, it doen't count to the minimum depth!
+ * Use case (1, null, 2, 3)
+ */
+public class Solution {
+    /*
+     * @param root: The root of binary tree
+     * @return: An integer
+     */
+    public int minDepth(TreeNode root) {
+        // write your code here
+        if (root == null) return 0;
+        if (root.left == null && root.right != null) return minDepth(root.right) + 1;
+        if (root.right == null && root.left != null) return minDepth(root.left) + 1;
+        else return 1 + Math.min(minDepth(root.left), minDepth(root.right));
+    }
+}
