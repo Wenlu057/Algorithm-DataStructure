@@ -635,3 +635,197 @@ public class Solution {
     }
 }
 
+// Flatten Binary Tree to Linked List
+/*
+ * Solution 1
+ * Binary Tree Traversal
+ * Construct the linked list from tail to head.
+ * Recursion in right, left, root order, the reversed order of preorder
+ * Set global variable pre to record the previous node before the current node.
+ * Update the pre, construct the linked list accordingly.	
+ */
+
+public class Solution {
+	 /*
+     * @param root: a TreeNode, the root of the binary tree
+     * @return: 
+     */
+     private TreeNode pre = null;
+     public void flatten(TreeNode root) {
+     	if (root == null) {
+     		return;
+     	}
+     	flatten(root.right);
+     	flatten(root.left);
+     	root.right = pre;
+     	root.left = null;
+     	pre = root;
+     }
+}
+
+/*
+ * Solution 2
+ * Construct the linked list form head to tail.
+ * Divide and Conquer
+ * Suppose we already get result of left subtree and right subtree.
+ * We connect the root to left subtree, connect the last node in the left subtree to right subtree.
+ * Be careful to check whether the left is null
+ * Don't forget to set left child to null.
+ */
+
+public class Solution {
+	public void flatten(TreeNode root) {
+		if (root == null) return;
+		helper(root);
+	}
+	public TreeNode helper(TreeNode root) {
+		if (root == null) return null;
+		// if (root.left == null && root.right == null) return root;
+		TreeNode left = helper(root.left);
+		TreeNode right = helper(root.right);
+		root.left = null;
+		if (left != null) {
+			TreeNode temp = left;
+			while (temp.right != null) {
+				temp = temp.right;
+			}
+			root.right = left;
+			temp.right = right;
+		} else {
+			root.right = right;
+		}
+		return root;
+	}
+}
+
+/*
+ * Solution 3
+ * Store all nodes into list in preorder.
+ * Construct the flattened tree based on the list.
+ */
+
+public class Solution {
+	public void flatten(TreeNode root) {
+		List<TreeNode> ls = new ArrayList<TreeNode>();
+		if (root == null) return;
+		helper(root, ls);
+		TreeNode temp = root;
+		for (int i = 1; i < ls.size(); i++) {
+			temp.left = null;
+			temp.right = ls.get(i);
+			temp = temp.right;
+		}
+	}
+	public void helper(TreeNode root, List<TreeNode> ls) {
+		if (root == null) return;
+		ls.add(root);
+		helper(root.left, ls);
+		helper(root.right, ls);
+	}
+}
+
+// Binary Tree Postorder Traversal
+
+/*Solution1 Traversal*/
+public class Solution {
+    /*
+     * @param root: A Tree
+     * @return: Postorder in ArrayList which contains node values.
+     */
+    public List<Integer> postorderTraversal(TreeNode root) {
+        // write your code here
+        List<Integer> res = new ArrayList<>();
+        helper(root, res);
+        return res;
+    }
+    public void helper(TreeNode root, List<Integer> ls) {
+        if (root == null) return;
+        helper(root.left, ls);
+        helper(root.right, ls);
+        ls.add(root.val);
+    }
+}
+/*Solution 2 Divide and Conquer*/
+public class Solution {
+	public List<Integer> postorderTraversal(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        if (root == null) return res;
+        List<Integer> left = postorderTraversal(root.left);
+        List<Integer> right = postorderTraversal(root.right);
+        res.addAll(left);
+        res.addAll(right);
+        res.add(root.val);
+        return res;
+    }
+}
+
+/* Soultion 3
+ * Non-recursive method 
+ * Here's the trick! Use a pointer to save the previous node, 
+ * Check the relationship between the previous and current,
+ * If the previous is parent node, it's going down, if it's leaf, pop it
+ * If the current is parent node, it's going up,
+ * if the previous is left node, try push the right node into stack
+ * if the previous is right node, we try both children, just pop it
+ */
+public class Solution {
+    /*
+     * @param root: A Tree
+     * @return: Postorder in ArrayList which contains node values.
+     */
+    public List<Integer> postorderTraversal(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        if (root == null) return res;
+        Stack<TreeNode> S = new Stack<>();
+        if (root == null)
+            return res;
+        S.push(root);
+        TreeNode prev = null;
+        while (!S.isEmpty()) 
+        {
+            TreeNode current = S.peek();
+  
+            /* go down the tree in search of a leaf an if so process it 
+            and pop stack otherwise move down */
+            if (prev == null || prev.left == current || 
+                                        prev.right == current) 
+            {
+                if (current.left != null)
+                    S.push(current.left);
+                else if (current.right != null)
+                    S.push(current.right);
+                else
+                {
+                    S.pop();
+                    res.add(current.val);
+                }
+  
+                /* go up the tree from left node, if the child is right 
+                   push it onto stack otherwise process parent and pop 
+                   stack */
+            } 
+            else if (current.left == prev) 
+            {
+                if (current.right != null)
+                    S.push(current.right);
+                else
+                {
+                    S.pop();
+                    res.add(current.val);
+                }
+                  
+                /* go up the tree from right node and after coming back
+                 from right node process parent and pop stack */
+            } 
+            else if (current.right == prev) 
+            {
+                S.pop();
+                res.add(current.val);
+            }
+  
+            prev = current;
+        }
+        return res;
+ 
+    }
+}
