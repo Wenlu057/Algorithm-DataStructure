@@ -829,3 +829,107 @@ public class Solution {
  
     }
 }
+
+// Construct Binary Tree from Preorder and Inorder Traversal
+/*
+ * The head of preorder array is always root node, use the value of the root value 
+ * to find the position in inorder array, lock the left subtree and right subtree accordingly,
+ * Use 4 indexes to record the begining and end in preorder and inorder.
+ */
+public class Solution {
+    /**
+     *@param preorder : A list of integers that preorder traversal of a tree
+     *@param inorder : A list of integers that inorder traversal of a tree
+     *@return : Root of a tree
+     */
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        // write your code here
+        // don't forget the case where length is 0
+        if (preorder == null || inorder == null || preorder.length == 0
+            ||inorder.length == 0) return null;
+        
+        return helper(preorder, inorder, 0, preorder.length - 1, 0, inorder.length - 1);
+        
+    }
+    public TreeNode helper(int[] preorder, int[] inorder, int prei, int prej, int ini, int inj){
+    	// remember to check the start and end value
+        if (preorder == null || inorder == null || prej - prei < 0 || inj - ini < 0) return null;
+        else{
+            TreeNode root = new TreeNode(preorder[prei]);
+            int index = 0;
+            for (int i = ini; i <= inj; i++) {
+                if (inorder[i] == preorder[prei]) {
+                    index = i;
+                    break;
+                }
+            }
+            root.left = helper(preorder, inorder, prei + 1, prei + index - ini, ini, index - 1 );
+            root.right = helper(preorder, inorder, prei + index - ini + 1, prej, index + 1, inj);
+            return root;
+        }
+ 
+    }
+}
+
+// Binary Tree Path
+/* Solution 1
+ * Divide and Conquer
+ * Suppose we have the left sub-tree path, and right sub-tree path
+ * Merge the two sub paths into final binary tree path	
+ */
+public class Solution {
+    /*
+     * @param root: the root of the binary tree
+     * @return: all root-to-leaf paths
+     */
+    public List<String> binaryTreePaths(TreeNode root) {
+        // write your code here
+        List<String> res = new ArrayList<>();
+        if (root == null) return res;
+        if (root.left == null && root.right == null) {
+            res.add("" + root.val);
+        }
+        List<String> left = binaryTreePaths(root.left);
+        List<String> right = binaryTreePaths(root.right);
+        for (int i = 0; i < left.size(); i++) {
+            res.add(root.val + "->" + left.get(i));
+        }
+        for (int i = 0; i < right.size(); i++ ) {
+            res.add(root.val + "->" + right.get(i));
+        }
+        return res;
+    }
+}
+/*
+ * Solution 2
+ * Deep first search
+ * the number of leaf nodes is equal to the number of tree paths.
+ * Each time in the recursion, we append one portion of the path into path,
+ * until we reach the leaf node, we add the path into the result list, otherwise
+ * continue the traversal.
+ */
+
+public class Solution {
+    /*
+     * @param root: the root of the binary tree
+     * @return: all root-to-leaf paths
+     */
+    public List<String> binaryTreePaths(TreeNode root) {
+        List<String> res = new ArrayList<>();
+        if (root == null) return res;
+        helper(root, res, "");
+        return res;
+        
+    }
+    public void helper(TreeNode root, List<String> res, String path) {
+        if (root == null) return;
+        if (root.left == null && root.right == null) {
+            path += "" + root.val;
+            res.add(path);
+        }else {
+            helper(root.left, res, path +root.val + "->");
+            helper(root.right, res, path + root.val + "->");
+        }
+
+    }
+}
