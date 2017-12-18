@@ -1289,3 +1289,48 @@ public class Solution {
         return (t1.val == t2.val) && isEqual(t1.left, t2.left) && isEqual(t1.right, t2.right);
     }
 }
+
+// Binary Tree Maximum Node
+/*Notice that we need return the node, not max value*/
+/*Solution 1 Use a global variable to record the max*/
+public class Solution {
+    /*
+     * @param root: the root of tree
+     * @return: the max node
+     */
+    private TreeNode max = null;
+    public TreeNode maxNode(TreeNode root) {
+        // write your code here
+        helper(root);
+        return max;
+    }
+    public void helper(TreeNode root) {
+        if (root == null) return;
+        if (max == null || root.val > max.val) {
+            max = root;
+        }
+        helper(root.left);
+        helper(root.right);
+    }
+}
+/*Solution 2, customize the max function to compare two nodes*/
+public class Solution {
+	public TreeNode maxNode(TreeNode root) {
+		if (root == null) return root;
+		TreeNode left = maxNode(root.left);
+		TreeNode right = maxNode(root.right);
+		return max(root, max(left, right));
+	}
+	public TreeNode max(TreeNode node1, TreeNode node2) {
+		if (node1 == null) {
+			return node2;
+		}
+		if (node2 == null) {
+			return node1;
+		}
+		if (node1.val < node2.val) {
+			return node2;
+		}
+		return node1;
+	}
+}
