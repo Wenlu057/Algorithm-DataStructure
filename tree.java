@@ -870,7 +870,39 @@ public class Solution {
  
     }
 }
-
+// Construct Binary Tree from Inorder and Postorder Traversal
+/* Same as above question*/
+public class Solution {
+    /*
+     * @param inorder: A list of integers that inorder traversal of a tree
+     * @param postorder: A list of integers that postorder traversal of a tree
+     * @return: Root of a tree
+     */
+    public TreeNode buildTree(int[] inorder, int[] postorder) {
+        // write your code here
+        if (inorder.length == 0 || postorder.length == 0) return null;
+        return helper(inorder, postorder, 0, inorder.length - 1, 0, postorder.length - 1);
+    }
+    public TreeNode helper(int[] inorder, int[] postorder, int ini, int inj, int pi, int pj) {
+        if (inorder.length == 0 || postorder.length == 0 
+            ||inj < ini || pj < pi) {
+                return null;
+            }
+        int rootVal = postorder[pj];
+        TreeNode root = new TreeNode(rootVal);
+        int index = 0;
+        for (int i = ini; i <= inj; i++) {
+            if (inorder[i] == rootVal) {
+                index = i;
+                break;
+            }
+        }
+        root.left = helper(inorder, postorder, ini, index - 1, pi, pi + index - ini - 1 );
+        root.right = helper(inorder, postorder, index + 1, inj, pi + index - ini, pj - 1);
+        return root;
+        
+    }
+}
 // Binary Tree Path
 /* Solution 1
  * Divide and Conquer
@@ -1029,4 +1061,47 @@ public class Solution {
 		}
 		return null;
 	}
+}
+
+// Binary Tree Zigzag Level Order Traversal
+/* Samilar as level order traversal, we can determine in which postion we want to add into list*/
+/* There is no reverse method for List in Java*/
+public class Solution {
+    /*
+     * @param root: A Tree
+     * @return: A list of lists of integer include the zigzag level order traversal of its nodes' values.
+     */
+    public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+        // write your code here
+        List<List<Integer>> res = new ArrayList<>();
+        if (root == null) {
+            return res;
+        }
+        Queue<TreeNode> nodes = new LinkedList<>();
+        nodes.add(root);
+        int size = 1;
+        int flag = 1;
+        while (!nodes.isEmpty()) {
+            List<Integer> ls = new ArrayList<>();
+            for (int i = 0; i < size; i++) {
+                TreeNode node = nodes.poll();
+                if (flag == 1) {
+                    ls.add(node.val);
+                } else {
+                    // if the traversal is from right to left, we add the element to the head of the list.
+                    ls.add(0, node.val); 
+                }
+                if (node.left != null) {
+                    nodes.add(node.left);
+                }
+                if (node.right != null) {
+                    nodes.add(node.right);
+                }
+            }
+            size = nodes.size();
+            flag = -flag;
+            res.add(ls);
+        }
+        return res;
+    }
 }
