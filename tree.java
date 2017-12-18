@@ -1105,3 +1105,92 @@ public class Solution {
         return res;
     }
 }
+
+// Segment Tree Query
+/* 
+ * Be careful about updating interval!
+ * Remember to compare mid and start, mid and end, 
+ * the mid should in between start and end after the update
+ */
+
+public class Solution {
+    /*
+     * @param root: The root of segment tree.
+     * @param start: start value.
+     * @param end: end value.
+     * @return: The maximum number in the interval [start, end]
+     */
+    public int query(SegmentTreeNode root, int start, int end) {
+        // write your code here
+        int max = Integer.MIN_VALUE;
+        if (start == root.start && end == root.end) return root.max;
+        int mid = (root.start + root.end) / 2;
+        if (start <= mid && end > mid) {
+            max = Math.max(max, query(root.left, start, mid));
+            max = Math.max(max, query(root.right, mid + 1, end));
+        }
+        else if (start <= mid) {
+            max = Math.max(max, query(root.left, start, mid < end ? mid : end)); // Caution
+        } else {
+            max = Math.max(max, query(root.right, start > mid + 1 ? start : mid + 1, end)); // Caution
+        }
+        
+        return max;
+         
+    }
+}
+
+// Segement Tree Modify
+/*
+ * The most difficult part is update the segment tree after the modification.
+ * DFS is sort of a backtracking method.
+ * Try to consider how to update in backtracking process.
+ * Means the DFS ALREADY reached the deepest portion and began to return something,
+ * What you want the program do after it begins to return.
+ * DFS has two classification. 1), linear DFS 2), Binary DFS
+ */
+/**
+ * Definition of SegmentTreeNode:
+ * public class SegmentTreeNode {
+ *     public int start, end, max;
+ *     public SegmentTreeNode left, right;
+ *     public SegmentTreeNode(int start, int end, int max) {
+ *         this.start = start;
+ *         this.end = end;
+ *         this.max = max
+ *         this.left = this.right = null;
+ *     }
+ * }
+ */
+
+
+public class Solution {
+    /*
+     * @param root: The root of segment tree.
+     * @param index: index.
+     * @param value: value
+     * @return: 
+     */
+    public void modify(SegmentTreeNode root, int index, int value) {
+        // write your code here
+        
+      if(root.start == index && root.end == index) { 
+            root.max = value;
+            return;
+        }
+        
+
+        int mid = (root.start + root.end) / 2;
+        if(root.start <= index && index <=mid) {
+            modify(root.left, index, value);
+        }
+        
+        if(mid < index && index <= root.end) {
+            modify(root.right, index, value);
+        }
+    	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    	// update!
+        root.max = Math.max(root.left.max, root.right.max);
+        
+    }
+}
