@@ -933,3 +933,100 @@ public class Solution {
 
     }
 }
+
+// Binary Tree Level Order Traversal II
+/*
+ * how to reverse the order of lever order traversal
+ * 1, use Collections.reverse(ls) to return the elements in the list.
+ * 2, use stack to save each level, then pop it to add into the list. 
+ */
+public class Solution {
+    /*
+     * @param root: A tree
+     * @return: buttom-up level order a list of lists of integer
+     */
+    public List<List<Integer>> levelOrderBottom(TreeNode root) {
+        // write your code here
+        List<List<Integer>> ls = new ArrayList<>();
+        if (root == null) return ls;
+        Queue<TreeNode> q = new LinkedList<>();
+        Stack<List<Integer>> st = new Stack<>();
+        int size = 1;
+        q.add(root);
+        while (!q.isEmpty()) {
+            List<Integer> temp = new ArrayList<>();
+            for (int i = 0; i < size; i++) {
+                TreeNode node = q.poll();
+                temp.add(node.val);
+                if (node.left != null) {
+                    q.add(node.left);
+                }
+                if (node.right != null) {
+                    q.add(node.right);
+                }
+            }
+            st.push(temp);
+            size = q.size();
+        }
+        while (!st.isEmpty()) {
+            ls.add(st.pop());
+        }
+        return ls;
+    }
+}
+
+//Binary Tree Serialization
+/*
+ * Use DFS to store Tree Nodes. Each time you go deeper, you append something to StringBuilder.
+ * The core of DFS is recursion, and in method arguments, you probably want to pass somehing like
+ * StringBuilder, List, Queue, Stack, Array which it could be carried and updated all the time. Or
+ * you could consider using a global variable and update it in each recursion call.
+ */
+/*
+ * Be familiar with standard JAVA API
+ * Collections like Queue, Stack, List: boolean addAll(Collection<? extends E> c)
+ * Convert Array to List: public static <T> List<T> asList(T... a)
+ * Convert String to int: Integer.valueOf(str)
+ */
+/*
+ * Design a data structure which we can retreive one node from it each time.
+ * The first one popped out is the root of the tree.
+ * Queue!
+ */
+public class Solution {
+	private static final String splitter = ",";
+	private static final String NN = "#";
+	public String serialize(TreeNode root) {
+		StringBuilder sb = new StringBuilder();
+		buildString(root, sb);
+		return sb.toString();
+	}
+	public void buildString(TreeNode root, StringBuilder sb) {
+		if (root == null) {
+			sb.append(NN).append(splitter);
+			return;
+		}
+		sb.append(root.val).append(splitter);
+		buildString(root.left, sb);
+		buildString(root.right, sb);
+	}
+	public TreeNode deserialize(String data) {
+		Queue<String> nodes = new LinkedList<>();
+		nodes.addAll(Arrays.asList(data.split(splitter)));
+		return buildTree(nodes);
+	}
+	public TreeNode buildTree(Queue<String> nodes) {
+		if (!nodes.isEmpty()) {
+			String val = nodes.poll();
+			if (val.equals(NN)) {
+				return null;
+			} else {
+				TreeNode node = new TreeNode(Integer.valueOf(val));
+				node.left = buildTree(nodes);
+				node.right = buildTree(nodes);
+				return node;
+			}
+		}
+		return null;
+	}
+}
