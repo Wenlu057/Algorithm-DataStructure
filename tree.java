@@ -1398,3 +1398,32 @@ public class Solution {
 		return Math.max(L, R);
 	}
 }
+// Convert Sorted Array to Binary Search Tree With Minimal Height
+/*
+ * Recursion, Divide and Conquer
+ * determine which part in the array is left subtree, which part in
+ * the array is right subtree.
+ * The middle element in the array is the root of BST.
+ * Use array to build tree, always need to pass start index and end
+ * index for recursion.
+ */
+public class Solution {
+    /*
+     * @param A: an integer array
+     * @return: A tree node
+     */
+    public TreeNode sortedArrayToBST(int[] A) {
+        // write your code here
+        return helper(A, 0, A.length - 1);
+        
+    }
+    public TreeNode helper(int[] A, int start, int end) {
+        if (A.length == 0) return null;
+        if (end < start) return null;
+        int mid = start + (end - start) / 2;
+        TreeNode root = new TreeNode(A[mid]);
+        root.left = helper(A, start, mid - 1);
+        root.right = helper(A, mid + 1, end);
+        return root;
+    }
+}
