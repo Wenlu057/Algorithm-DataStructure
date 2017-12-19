@@ -1334,3 +1334,67 @@ public class Solution {
 		return node1;
 	}
 }
+
+// Tree Longest Path With Same Value
+/*
+ * we need create a list, for each node we can get all the nodes it connects.
+ * Be careful the index of first node is 0 in array A. 
+ * We could create a list like below:
+ *****************************
+ * 0-A[0]: A[1], A[2]
+ * 1-A[1]: A[0], A[3], A[4]
+ * 2-A[2]: A[0]
+ * 3-A[3]: A[1]
+ * 4-A[4]: A[1]
+ *****************************
+ * We also need to check if the current node is already visited.
+ * For DFS, we can pass a boolean array  as an argument and update in each recursive call.
+ * Another key point is to determine left node and right node.
+ * We assume we can calculate the longest path regarding current node, means 
+ * we shall iterate the whole array A to get each longest path.
+ * Same as maximum path sum(any -> any), we only return single path, use a global variable
+ * to update the max value. 
+ */
+public class Solution {
+	public int ans = 0;
+	List<List<Integer>> ch = new ArrayList<>();
+	public int LongestPathWithSameValue(int[] A, int[] E) {
+		//write your code here
+		int len = A.length;
+		//initialize ch
+		for (int i = 0; i < len; i++) {
+			ch.add(new ArrayList<>());
+		}
+		//update ch based on array E
+		for (int i = 0; i < len - 1; i++) {
+			ch.get(E[2 * i] - 1).add(E[2 * i + 1] - 1);
+			ch.get(E[2 * i + 1] - 1).add(E[2 * i] - 1);
+		}
+
+		for (int i = 0; i < len; i++) {
+			boolean[] marked = new boolean[len];
+			for (int j = 0; j < len; j++) {
+				marked[j] = false;
+			}
+			dfs(A,marked,i);
+		}
+		return ans;
+	}
+	public int dfs(int[] A, boolean[] marked, int index) {
+		int L = 0, R = 0;
+		marked[index] = true; // mark as visited
+		boolean flag = true; 
+		for (int val : ch.get(index)) {
+			if (!marked[val] && A[index] == A[val]) {
+				if (flag) { // if left node
+					L = dfs(A, marked, val) + 1;
+					flag = false;
+				} else { // right node
+					R = dfs(A, marked, val) + 1;
+				}
+			}
+		}
+		ans = Math.max(ans, L + R);
+		return Math.max(L, R);
+	}
+}
