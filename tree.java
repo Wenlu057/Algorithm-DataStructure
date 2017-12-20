@@ -1846,3 +1846,78 @@ public class Solution {
     }
 
 }
+// Count of Smaller Number
+/* 
+ * Segment Tree
+ * Segment Tree Build, Segment Tree Query
+ */
+class SegmentTreeNode {
+    public int start, end, count;
+    public SegmentTreeNode left, right;
+    public SegmentTreeNode(int start, int end, int count) {
+        this.start = start;
+        this.end = end;
+        this.count = count;
+        this.left = this.right = null;
+    }
+}
+public class Solution {
+    /*
+     * @param A: An integer array
+     * @param queries: The query list
+     * @return: The number of element in the array that are smaller that the given integer
+     */
+    public List<Integer> countOfSmallerNumber(int[] A, int[] queries) {
+        // write your code here
+        List<Integer> ls = new ArrayList<>();
+        if (A.length == 0) {
+            for (int i = 0; i < queries.length; i++) {
+                ls.add(0);
+            }
+            return ls;
+        }
+        int max = 0;
+        for (int i = 0; i < A.length; i++) {
+            if (A[i] > max) {
+                max = A[i];
+            }
+        }
+        SegmentTreeNode root = buildSegmentTree(A, 0, max);
+        for (int i = 0; i < queries.length; i++) {
+            ls.add(query(0, queries[i] - 1, root));
+        }
+        return ls;
+    }
+    private int query(int start, int value, SegmentTreeNode root) {
+        int mid = (root.start + root.end) / 2;
+        if (start == root.start && value == root.end) return root.count;
+        if (root.start == root.end) return root.count;
+        if (value <= mid) {
+            return query(start, value, root.left);
+        } else if (start > mid) {
+            return query(start, value, root.right);
+        } else
+        {
+            return query(start, mid, root.left) + query(mid + 1, value, root.right);
+        }
+    }
+    private SegmentTreeNode buildSegmentTree(int[] A, int start, int end) {
+        SegmentTreeNode root = new SegmentTreeNode(start, end,0);
+        int count = 0;
+        for (int i = 0; i < A.length; i++) {
+            if (A[i] >= start && A[i] <= end) {
+                count++;
+            }
+        }
+        root.count = count;
+        if (start == end) {
+            root.left = null;
+            root.right = null;
+            return root;
+        }
+        int mid = (root.start + root.end) / 2;
+        root.left = buildSegmentTree(A, start, mid);
+        root.right = buildSegmentTree(A, mid + 1, end);
+        return root;
+    }
+}
