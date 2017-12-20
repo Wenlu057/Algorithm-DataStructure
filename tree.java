@@ -1745,3 +1745,104 @@ public class Solution {
     }
 
 }
+// Insert Node in a Binary Search Tree
+/*BST Insert Operation*/
+public class Solution {
+    /*
+     * @param root: The root of the binary search tree.
+     * @param node: insert this node into the binary search tree
+     * @return: The root of the new binary search tree.
+     */
+    public TreeNode insertNode(TreeNode root, TreeNode node) {
+        // write your code here
+        // if (root == null) {
+        //     return node;
+        // }
+        // if (root.left == null && root.val > node.val) {
+        //     root.left = node;
+        //     return root;
+        // }
+        // if (root.right == null && root.val < node.val) {
+        //     root.right = node;
+        //     return root;
+        // }
+        // if (root.val > node.val){
+        //     insertNode(root.left, node);
+        // } else if (root.val < node.val) {
+        //     insertNode(root.right, node);
+        // }
+        // return root;
+        if (root == null) {
+            return node;
+        }
+        if (root.val > node.val) {
+            root.left = insertNode(root.left, node);
+        } else {
+            root.right = insertNode(root.right, node);
+        }
+        return root;
+    }
+}
+
+// Remove Node in Binary Search Tree
+/*
+ * Tough point: if you want to delete a node in a tree, you must 
+ * have the reference of the parent node!!! 
+ * If the root can be removed, we probably want a dummy node and
+ * it points to the root. Return the child of dummy node at last.
+ * How to remove a node in BST? 3 CASES:
+ * 1.it has no children
+ * 2.it has left child
+ * 3,it has two children
+ * Use the recursion to locate the target node, keep track of parent
+ */
+
+public class Solution {
+    /*
+     * @param root: The root of the binary search tree.
+     * @param value: Remove the node with given value.
+     * @return: The root of the binary search tree after removal.
+     */
+    public TreeNode removeNode(TreeNode root, int value) {
+        // write your code here
+        if (root == null) return null;
+        TreeNode dummy = new TreeNode(0);
+        dummy.right = root;
+        helper(root, value, dummy);
+        return dummy.right;
+    }
+    
+    public void helper(TreeNode root, int value, TreeNode parent){
+        if (root == null) return;
+        if (root.val == value) {
+            if (root.left == null && root.right == null) {
+                parent.right = root.right;
+            } else if (root.left == null){
+                if (parent.val > root.val) {
+                    parent.left = root.right;
+                } else {
+                    parent.right = root.right;
+                }
+                
+            } else {
+                TreeNode p = root;
+                TreeNode it = root.left;
+                while (it.right != null) {
+                    p = it;
+                    it = it.right;
+                }
+                root.val = it.val;
+                if (p == root) {
+                    p.left = it.left;
+                }else {
+                    p.right = it.left;
+                }
+            }
+        } else if (root.val > value) {
+            helper(root.left, value, root);
+        } else {
+            helper(root.right, value, root);
+        }
+    }
+
+}
