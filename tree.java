@@ -1427,3 +1427,63 @@ public class Solution {
         return root;
     }
 }
+
+// Segement Tree Build
+/* Same as Binary Tree Build
+ * first creat the root, second root.left = recursion(..),
+ * finally root.right = recursion(..)
+ * The left child of node A has start=A.left, end=(A.left + A.right) / 2.
+ * The right child of node A has start=(A.left + A.right) / 2 + 1, end=A.right
+ */
+public class Solution {
+    /*
+     * @param start: start value.
+     * @param end: end value.
+     * @return: The root of Segment Tree.
+     */
+    public SegmentTreeNode build(int start, int end) {
+        // write your code here
+        if (start > end) return null;
+        SegmentTreeNode root = new SegmentTreeNode(start, end);
+        if (start == end) return root;
+        root.left = build(start, (start + end) / 2);
+        root.right = build((start + end) / 2 + 1, end);
+        return root;
+        
+        
+    }
+}
+// Segment Tree Query II
+/*
+ * Be careful the start and end is beyond the range of the segment tree!
+ * 3 cases: answer is in left tree, answer is the sum of left and right, 
+ * answer is right subtree
+ */
+public class Solution {
+    /*
+     * @param root: The root of segment tree.
+     * @param start: start value.
+     * @param end: end value.
+     * @return: The count number in the interval [start, end]
+     */
+    public int query(SegmentTreeNode root, int start, int end) {
+        // write your code here
+        if (end < start || root == null) return 0;
+        if (end > root.end) {
+            end = root.end;
+        }
+        if (start < root.start) {
+            start = root.start;
+        }
+        if (root.start == start && root.end == end) return root.count;
+        int mid = (root.start + root.end) / 2;
+        if (start <= mid && end <= mid) {
+            return query(root.left, start, end);
+        }else if (start <= mid && end > mid) {
+            return query(root.left, start, mid) + query(root.right, mid + 1, end);
+        }else if (start > mid && end > mid) {
+            return query(root.right, start, end);
+        }
+        return 0;
+    }
+}
