@@ -1487,3 +1487,74 @@ public class Solution {
         return 0;
     }
 }
+
+// BST Swapped Nodes
+/* Only two nodes are swapped
+ * Use inorder traversal, a variable to track the pre node 
+ * When we found the abnormal portion, the previous node for first time and
+ * current node for second time are the two swapped nodes.
+ */
+public class Solution {
+	private TreeNode pre = null;
+	private TreeNode mistake1, mistake2 = null;
+	public TreeNode bstSwappedNode(TreeNode root) {
+		if (root == null) return null;
+		inorderTraversal(root);
+		if (mistake1 != null) {
+			int tmp = mistake1.val;
+			mistake1.val = mistake2.val;
+			mistake2.val = tmp;
+		}
+		return root;
+	}
+	public void inorderTraversal(TreeNode root) {
+		if (root == null) {
+			return;
+		}
+		inorderTraversal(root.left) // go deeper in left
+		if (pre != null && pre.val > root.val) {
+			if (mistake1 == null) {
+				mistake1 = pre;
+			}
+			mistake2 = root;
+		}
+		pre = root;
+		inorderTraversal(root.right);
+	}
+}
+
+// Binary Tree Path Sum
+/* Permutation!!
+ * Pass a list as an argument of recursive call.
+ * Don't forget to remove when backtracking
+ */
+public class Solution {
+    /*
+     * @param root: the root of binary tree
+     * @param target: An integer
+     * @return: all valid paths
+     */
+    public List<List<Integer>> binaryTreePathSum(TreeNode root, int target) {
+        // write your code here
+        List<List<Integer>> res = new ArrayList<>();
+        if (root == null) return res;
+        helper(root, target, res, new ArrayList<>());
+        return res;
+        
+    }
+    public void helper(TreeNode root, int target, List<List<Integer>> res, List<Integer> ls) {
+        if (root == null) return;
+        ls.add(root.val);
+        if (root.left == null && root.right == null && root.val == target) {
+            res.add(new ArrayList<>(ls));
+            return;
+        }
+        helper(root.left, target - root.val, res, ls);
+        if (root.left != null)
+        ls.remove(ls.size() - 1);
+        helper(root.right, target - root.val, res, ls);
+        if (root.right != null)
+        ls.remove(ls.size() - 1);
+    }
+    
+}
