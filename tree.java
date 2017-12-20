@@ -1550,11 +1550,198 @@ public class Solution {
             return;
         }
         helper(root.left, target - root.val, res, ls);
-        if (root.left != null)
+        // if the left node is null, when stepping into the next level
+        // it will immediatly return without add anything to the list.
         ls.remove(ls.size() - 1);
+        if (root.left != null)
         helper(root.right, target - root.val, res, ls);
         if (root.right != null)
         ls.remove(ls.size() - 1);
     }
     
+}
+// Convert BST to Greater Tree
+/*
+ * Solution 1
+ * From left to right
+ * The left most is the sum of all nodes,
+ * Iterate all nodes, the val of current node is the sum of all nodes 
+ * subtracts the sum of all visited nodes.
+ */
+public class Solution {
+    /*
+     * @param root: the root of binary tree
+     * @return: the new root
+     */
+    int pre = 0;
+    int sum = 0;
+    public TreeNode convertBST(TreeNode root) {
+        // write your code here
+        sum = getSum(root);
+        return helper(root);
+    }
+    public TreeNode helper(TreeNode root) {
+        if (root == null) return null;
+        helper(root.left);
+        int temp = root.val;
+        if (pre == 0) {
+            root.val = sum;
+        } else {
+            root.val = sum - pre;
+        }
+        pre += temp;
+        helper(root.right);
+        return root;
+    }
+    public int getSum(TreeNode root) {
+        if (root == null) return 0;
+        return root.val + getSum(root.left) +getSum(root.right);
+    }
+}
+
+/*
+ * Solution 2
+ * From right to left
+ * The val of current node is the sum of all visited nodes.
+ */
+public class Solution {
+	int sum = 0;
+	public TreeNode dfs(TreeNode root) {
+		if (root == null) return null;
+		dfs(root.right);
+		root.val += sum;
+		sum = root.val;
+		dfs(root.left);
+		return root;
+	}
+	public TreeNode convertBST(TreeNode root) {
+		return dfs(root);
+	}
+}
+
+// Two sum - BST edition
+/*
+ * Soultion 1
+ * Same as TwoSum
+ * Use HashSet to save value of visited nodes
+ * Trick: the set contains (sum - current node value ) --> we found it
+ */ 
+public class Solution {
+    /*
+     * @param : the root of tree
+     * @param : the target sum
+     * @return: two numbers from tree which sum is n
+     */
+    int[] ans = null;
+    public int[] twoSum(TreeNode root, int n) {
+        // write your code here
+        Set<Integer> set = new HashSet<>();
+        if (root == null) return null;
+        helper(root, n, set);
+        return ans;
+    }
+    public void helper(TreeNode root, int n, Set<Integer> set) {
+        if (root == null) return;
+        if (set.contains(n - root.val)) {
+            ans = new int[]{root.val, n - root.val};
+            return;
+        } else {
+            set.add(root.val);
+        }
+        helper(root.left, n, set);
+        if (root.val < n) {
+            helper(root.right, n, set);
+        }
+    }
+
+}
+/*
+ * Soultion 2
+ * similar as finding two sum in sorted array
+ * suppose i = 0, j = A.length - 1
+ * if A[i] + A[j] > sum, j--
+ * if A[i] + A[j] < sum, i++
+ * if A[i] + A[j] = sum, return A[i], A[j]
+ * in BST, i is the left most node, j is the right most node.
+ */
+/*time complexity : O(nlogn), space complexity: O(1)*/
+/*Get predecessor, successor in BST*/
+public class Solution {
+    /*
+     * @param : the root of tree
+     * @param : the target sum
+     * @return: two numbers from tree which sum is n
+     */
+    public int[] twoSum(TreeNode root, int n) {
+        if (root == null) return null ;
+        TreeNode start = getMinimum(root);
+        TreeNode end = getMaximum(root);
+        int[] ans = new int[2];
+        while (start.val < end.val) {
+            int sum = start.val + end.val;
+            if (sum < n) {
+                start = getSuccessor(start, root);
+            } else if (sum > n) {
+                end = getPredecessor(end, root);
+            } else break;
+        }
+        ans[0] = start.val;
+        ans[1] = end.val;
+        return ans;
+        
+    }
+    public TreeNode getPredecessor(TreeNode node, TreeNode root) {
+        if (node == null) return null;
+        // if left subtree is not empty, the predecessor it the right most node in left subtree
+        if (node.left != null) { 
+            return getMaximum(node.left);
+        }
+
+        TreeNode ret = null;
+        TreeNode curr = root;
+        // the last node down to right is the predecessor
+        while (curr != null) {
+            if (curr.val < node.val) {
+                ret = curr;
+                curr = curr.right;
+            } else if (curr.val > node.val) {
+                curr = curr.left;
+            } else break;
+        }
+        return ret;
+    }
+    
+    public TreeNode getSuccessor (TreeNode node, TreeNode root) {
+        if (node == null) return null;
+        if (node.right != null) {
+            return getMinimum(node.right);
+        }
+
+        TreeNode ret = null;
+        TreeNode curr = root;
+        while (curr != null) {
+            if (curr.val > node.val) {
+                ret = curr;
+                curr = curr.left;
+            } else if (curr.val < node.val) {
+                curr = curr.right;
+            } else break;
+        }
+        return ret;
+    }
+    private TreeNode getMinimum(TreeNode root) {
+        TreeNode it = root;
+        while (it.left != null) {
+            it = it.left;
+        }
+        return it;
+    }
+    private TreeNode getMaximum(TreeNode root) {
+        TreeNode it = root;
+        while (it.right != null) {
+            it = it.right;
+        }
+        return it;
+    }
+
 }
