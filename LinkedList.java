@@ -22,7 +22,27 @@ public class ListNode {
 		next = null;
 	}
 }
-
+// Remove Duplicates from Sorted List
+/* deletion after an existing node*/
+public class Solution {
+    /*
+     * @param head: head is the head of the linked list
+     * @return: head of linked list
+     */
+    public ListNode deleteDuplicates(ListNode head) {
+        // write your code here
+        if (head == null || head.next == null) return head;
+        ListNode it = head;
+        while (it.next != null) {
+            if (it.next.val == it.val) {
+                it.next = it.next.next;
+            } else {
+                it = it.next;
+            }
+        }
+        return head;
+    }
+}
 // Remove Duplicates from Sorted List II
 /* Solution 1
  * Because we don't know if the head is distinct, a dummy node is needed.
