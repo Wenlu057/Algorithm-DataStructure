@@ -217,3 +217,91 @@ public class Solution {
         
     }
 }
+
+// Partition List
+/*
+ *  Maintain the references of two lists, one connects all the nodes less than x,
+ *  the other one connects all the nodes no less than x.
+ *  Use two dummy nodes, because we don't know the head node of the two lists.
+ *  Iterate the whole list, dependent on the value comparison, connects the previous
+ *  to current, update the previous to current accordingly.
+ *  Don't forget to let the last node of list with greater nodes points to null.
+ *  Connects the tail of list with smaller nodes to the head of the list with greater nodes.
+ */
+
+public class Solution {
+    /*
+     * @param head: The first node of linked list
+     * @param x: An integer
+     * @return: A ListNode
+     */
+    public ListNode partition(ListNode head, int x) {
+        // write your code here
+        if (head == null || head.next == null) return head;
+        ListNode ls1 = new ListNode(0);
+        ListNode ls2 = new ListNode(0);
+        ListNode it1 = ls1;
+        ListNode it2 = ls2;
+        ListNode it = head;
+        while (it != null) {
+            if (it.val < x) {
+                it1.next = it;
+                it1 = it;
+            } else {
+                it2.next = it;
+                it2 = it;
+            }
+            it = it.next;
+        }
+        it1.next = ls2.next;
+        it2.next = null;
+        return ls1.next;
+    }
+}
+
+// Sort List
+/*
+ * Merge Sort
+ * slow pointer, fast pointer to find the middle point.
+ * Merge two sorted linked list to one sorted list using dummy node
+ * Don't forget to let the last node of first half  points to null!
+ * Don't forget to update the pointer to next in the while loop.
+ */
+public class Solution {
+    /*
+     * @param head: The head of linked list.
+     * @return: You should return the head of the sorted linked list, using constant space complexity.
+     */
+    public ListNode sortList(ListNode head) {
+        // write your code here
+        if (head == null || head.next == null) return head;
+        ListNode slow = head; // the head of second list
+        ListNode fast = head.next;
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        ListNode head2 = slow.next; 
+        slow.next = null; // caution!!! set the next of the tail to null.
+        ListNode left = sortList(head);
+        ListNode right = sortList(head2);
+        return merge(left, right);
+    }
+    public ListNode merge (ListNode left, ListNode right) {
+        if (left == null || right == null) return left == null ? right : left;
+        ListNode dummy = new ListNode(0);
+        ListNode it = dummy;
+        while (left != null && right != null) {
+            if (left.val < right.val) {
+                it.next = left;
+                left = left.next;
+            } else {
+                it.next = right;
+                right = right.next;
+            }
+            it = it.next; // caution!!! need to update!
+        }
+        it.next = left == null? right : left;
+        return dummy.next;
+    }
+}
