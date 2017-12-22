@@ -126,3 +126,94 @@ public class Solution {
         return dummy.next;
     }
 }
+
+// Reverse Linked List
+/* Solution 1 - Non Recursion
+ * Because if you want to reverse the linked list, the current node
+ * will point to the previous node, we use a pointer to keep track of 
+ * the previous node.
+ * If the current points to the previous, we will lose the reference
+ * of the next, we need also save the next before you change the reference.
+ * Iterate the whole linked list until we finish the reverse.
+ */
+public class Solution {
+    /*
+     * @param head: n
+     * @return: The new head of reversed linked list.
+     */
+    public ListNode reverse(ListNode head) {
+        // write your code here
+        ListNode pre = null;
+        ListNode curr = head;
+        while (curr != null) {
+            ListNode tmp = curr.next;
+            curr.next = pre;
+            pre = curr;
+            curr = tmp;
+        }
+        return pre;
+    }
+}
+
+/* Solution 2 - Recursion 
+ * Suppose all nodes after the head is in reversed order,
+ * We only need do the last step which the head is added into the list.
+ * The linked list before the last step is something like this:
+ * 1 -> 2 <- 3 <- 4 <- 5
+ * Change the reference direction between head node and second node.
+ * Let the head points to null at last.
+ */
+public class Solution {
+    /*
+     * @param head: n
+     * @return: The new head of reversed linked list.
+     */
+    // public ListNode reverse(ListNode head) {
+    public ListNode reverse(ListNode head) {
+        if (head == null || head.next == null) return head;
+        ListNode node = reverse(head.next);
+        head.next.next = head;
+        head.next = null;
+        return node;
+    }
+}
+// Reverse Linked List II
+/*
+ * 4 important position:
+ * A pointer before the reversed segment,
+ * a pointer after the reversed segment,
+ * a pointer of the head of reversed segment,
+ * a pointer of the tail of reversed segment.
+ */
+
+public class Solution {
+    /*
+     * @param head: ListNode head is the head of the linked list 
+     * @param m: An integer
+     * @param n: An integer
+     * @return: The head of the reversed ListNode
+     */
+    public ListNode reverseBetween(ListNode head, int m, int n) {
+        // write your code here
+        if (head == null || head.next == null) return head;
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode preM = dummy;
+        for (int i = 1; i < m; i++) {
+            preM = preM.next;
+        }
+        ListNode M = preM;
+        ListNode postN = preM.next;
+        ListNode N = preM.next;
+        for (int i = m; i <= n; i++) {
+            ListNode tmp = postN.next;
+            postN.next = M;
+            M = postN;
+            postN = tmp;
+        }
+        preM.next = M;
+        N.next = postN;
+        return dummy.next;
+        
+    }
+}
