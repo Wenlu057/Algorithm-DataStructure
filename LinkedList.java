@@ -305,3 +305,133 @@ public class Solution {
         return dummy.next;
     }
 }
+
+// Reorder List
+/*
+ * Divide the list into half half.
+ * Reverse the second half.
+ * Merge two lists into one list.
+ * How to merge two list into one? we take one node in turn from two lists.
+ * 1, use one additional pointer, in each time we add one node until the merge is complete.
+ *.   use a flag to determine the node in which list is needed.
+ * 2, use two pointers to save the next node of the iterator in two lists. 
+ *    if we change the reference of a pointer which may cause the pointer loses the original refrerence
+ *    try to think of using a pointer to save the original reference.
+ */
+public class Solution {
+    /*
+     * @param head: The head of linked list.
+     * @return: nothing
+     */
+    public void reorderList(ListNode head) {
+        // write your code here
+        if (head == null || head.next == null) return;
+        ListNode slow = head;
+        ListNode fast = head.next;
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        ListNode ls2 = slow.next;
+        slow.next = null;
+        ListNode rLs2 = reverse(ls2);
+        merge(head, rLs2);
+        
+    }
+    
+    public ListNode reverse(ListNode head) {
+        if (head == null || head.next == null) return head;
+        ListNode pre = null;
+        ListNode curr = head;
+        while (curr != null) {
+            ListNode tmp = curr.next;
+            curr.next = pre;
+            pre = curr;
+            curr = tmp;
+        }
+        return pre;
+    }
+    public void merge(ListNode ls1, ListNode ls2) {
+        // if (ls1 == null) {
+            
+        // }
+        // ListNode it = ls1;
+        // ListNode it1 = ls1.next;
+        // ListNode it2 = ls2;
+        // int flag = 1;
+        // while (it1 != null && it2 != null) {
+        //     if (flag == 1) {
+        //         it.next = it2;
+        //         it2 = it2.next;
+        //     } else {
+        //         it.next = it1;
+        //         it1 = it1.next;
+        //     }
+        //     flag = -flag;
+        //     it = it.next;
+        // }
+        // if (it1 != null || it2 != null) {
+        //     it.next = it1 != null ? it1 :it2;
+        // }
+        while (ls1 != null && ls2 != null) {
+            ListNode node1 = ls1.next;
+            ListNode node2 = ls2.next;
+            ls1.next = ls2;
+            ls2.next = node1;
+            ls1 = node1;
+            ls2 = node2;
+        }
+   
+    }
+    
+}
+// Merge K Sorted Lists
+/* Priority Queue */
+/* Use a priority queue to save all head nodes in the lists.
+ * Priority queue needs a Comparator as one argument.
+ * Implement inner anonymous class of comparator.
+ * Poll the node from the priority queue, add the next node into queue
+ * until we have polled all nodes.
+ * Key points:
+ * How to find next node to be added into queue after one node is polled? 
+ * It can be tracked based on the polled node.
+ */
+public class Solution {
+    /**
+     * @param lists: a list of ListNode
+     * @return: The head of one sorted list.
+     */
+    public ListNode mergeKLists(List<ListNode> lists) {  
+        // write your code here
+        if (lists == null || lists.size() == 0) return null;
+        ListNode dummy = new ListNode(0);
+        ListNode it = dummy;
+        
+        if (lists.size() == 1 ) return lists.get(0);
+        Queue<ListNode> heap = new PriorityQueue<ListNode>(lists.size(), ListNodeComparator);
+        for (int i = 0; i < lists.size(); i++) {
+            if (lists.get(i) != null) {
+                heap.add(lists.get(i));
+            }
+        }
+        while (!heap.isEmpty()) {
+            ListNode node = heap.poll();
+            if (node.next != null) {
+                heap.add(node.next);
+            }
+            it.next = node;
+            it = it.next;
+        }
+        
+        return dummy.next;
+    }
+    // inner anonymous class 
+    Comparator<ListNode> ListNodeComparator = new Comparator<ListNode>() {
+        public int compare(ListNode l1, ListNode l2) {
+            if (l1 == null || l2 == null) {
+                return l1 == null? 1 : -1;
+            }
+                return l1.val - l2.val;
+            }
+    };
+}
