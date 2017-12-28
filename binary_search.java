@@ -358,30 +358,40 @@ public class Solution {
    * Notes:
    * num << i means num multiply i times 2
    */
-
+  /*
+   * Example : dividend 30 divisor 3
+   * 1st loop : 30 < 3 * 2 * 2 * 2 * 2 numshift = 4, add 2 * 2 * 2 into res, 30 - 3 * 2 * 2 * 2 = 6
+   * 2nd loop : 6 < 3 * 2 numshift = 2, add 2 into res, 6 - 3 * 2 = 0
+   * exit
+   * result : 101 in binary
+   */
   class Solution {
-  	public int divide (int dividend, int divisor) {
-  		//handle special cases
-  		if(divisor == 0) return Intger.MAX_VALUE;
-  		if(divisor == -1 && dividend == Integer.MIN_VALUE) return Integer.MAX_VALUE;
-  		//get positive values
-  		long pDividend = Math.abs((long)dividend);
-  		long pDivisor = Math.abs((long)divisor);
-  		int result = 0;
-  		while(pDividend >= pDivisor){
-  			int numShift = 0;
-  			while(pDividend >= (pDivisor << numShift)){
-  				numShift++;
-  			}
-  			result += 1 << (numShift - 1);
-  			pDividend -= (pDivisor<<(numShift - 1));
-  		}
-  		if((dividend>0 && divisor>0) || (dividend<0 && divisor<0)){
-            return result;
-        }else{
-            return -result;
-        }
-  	}
+      public int divide(int dividend, int divisor) {
+          // Handle abnormal cases caused by overflow
+          if (divisor == 0) return Integer.MAX_VALUE;
+          if (dividend == Integer.MIN_VALUE && divisor == -1) return Integer.MAX_VALUE;
+          // change to positive
+          Long pDividend = Math.abs((long)dividend);
+          Long pDivisor = Math.abs((long)divisor);
+          // lock ALL 1's position in binary format
+          int res = 0;
+          // think of exit condition
+          while (pDividend >= pDivisor){
+              // count left shift
+              int numShift = 0;
+              while (pDividend >= (pDivisor << numShift)){ // pDivisor * 2 * 2 * 2 ... * 2
+                  numShift++;
+              }
+              // find most significant bit,...., least significant bit
+              res += 1 << (numShift - 1)
+              // Substract the value in current loop from dividend
+              pDividend -= pDivisor << (numShift - 1);
+          }
+          if ((dividend > 0 && divisor > 0) || (dividend < 0 && divisor < 0))
+              return result;
+          else
+              return - result;
+      }
   }
   //First Bad Version
   /*
