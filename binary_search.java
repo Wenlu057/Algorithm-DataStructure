@@ -454,6 +454,10 @@ public class Solution {
         if(target <= A[l] ) return l;
         else if(target > A[l] && target <= A[r]) return r;
             else return r + 1;
+        // when exiting the loop, in most cases the target is between the A[l] and A[r]
+        //if (r == A.length - 1 && target > A[r]) return A.length;
+        //else if (l == 0 && target <= A[l]) return 0;
+        //else return r;
         
     }
   }
