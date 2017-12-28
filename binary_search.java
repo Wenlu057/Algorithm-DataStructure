@@ -487,7 +487,7 @@ public class Solution {
                 r = mid;
             }
         }
-        if(A[l] != target && A[r] != target) return new int[]{-1, -1};
+        if(A[l] != target && A[r] != target) return new int[]{-1, -1}; // don't forget the case when the target is not found in the array.
         int end = r;
         while(end < A.length && A[end] == target) {
                 end++;
