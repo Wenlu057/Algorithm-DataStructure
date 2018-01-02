@@ -504,6 +504,8 @@ public class Solution {
    *We can remove duplicate from one side once at a time, or remove
    *all the duplicates from both left and right.
    */
+  // Solution 1 Remove duplicates once a time
+  // Trick: try to compare with the last element instead of the first.
   public class Solution {
     /*
      * @param A: an integer ratated sorted array and duplicates are allowed
@@ -516,32 +518,66 @@ public class Solution {
         int l = 0, r = A.length - 1;
         while(l + 1 < r) {
             int mid = l + (r - l) / 2;
-            // if (A[l] == target || A[r] == target) return true; //it may remove compare time
-            // if(A[l] == A[r]) {
-            //     int val = A[l];
-            //     while(l + 1 < r && A[l] == val) l++;
-            //     while(l + 1 < r && A[r] == val) r--;
-            // } // remove all the duplicates from left and right sides
-            if (A[mid] > A[l]) {
-                if(A[l] < target && target < A[mid] ){
+            if (A[mid] > A[r]) {
+                if(A[l] <= target && target < A[mid] ){ //Don't forget the case which the target is the A[l]
                     r = mid;
                 }else{
                     l = mid;
                 }
             }else if(A[mid] < A[r]){
-                if(A[mid] < target && target < A[r]) {
+                if(A[mid] < target && target <= A[r]) { // Don't forget the case which the target is A[r]
                     l = mid;
                 }else{
                     r = mid;
                 }
             }else{
-                l++; // remove one duplicate from left, r-- also works
+                //Whether it's r-- or l ++ depends A[mid] compare with A[r] or A[l]
+                // if it compares with A[l], we can use l++, the goal is to avoid the case that we remove unique element from array.
+                r--; // remove one duplicate from left, l++ also works
             }
         }
         if(A[l] == target || A[r] == target) return true;
         else return false;
     }
   }
+  // Solution 2 Remove all duplicates at a time
+       public class Solution {
+           public boolean search(int[] A, int target) {
+               if (A.length == 0) return false;
+               int l = 0, r = A.length - 1;
+               while (l + 1 < r) {
+                   int mid = l + (r - l) / 2;
+                   if (A[l] == A[r]) {
+                       if (target == A[l]) return true;
+                       int val = A[l];
+                       while (A[l] == val && l + 1 < r) {
+                           l ++; // remove all duplicates from left;
+                       }
+                       while (A[r] == val && l + 1 < r) {
+                           r --; // remove all duplicates from right;
+                       }
+                       mid = l + (r - l) / 2;
+                   }
+                   // find the target as we don't have any duplicates.
+                   if (A[r] < A[mid]) {
+                       if (target >= A[l] && A[mid] > target) {
+                           r = mid;
+                       } else {
+                           l = mid;
+                       }
+                   } else {
+                       if (target <= A[r] && A[mid] < target) {
+                           l = mid;
+                       } else {
+                           r = mid;
+                       }
+                   }
+               }
+               if (A[l] == target || A[r] == target) return true;
+               return false;
+           }
+       }
+    
 
   //Find Minimum in Rotated Sorted Array II
   /*
