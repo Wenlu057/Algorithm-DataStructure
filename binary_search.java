@@ -949,3 +949,33 @@ public class Solution {
     }
 }
 
+//Solution 2 : use l + 1 < r
+       public class Solution {
+           /*
+            * @param nums: an array containing n + 1 integers which is between 1 and n
+            * @return: the duplicate one
+            */
+           public int findDuplicate(int[] nums) {
+               // write your code here
+               
+               int l = 1, r = nums.length - 1;
+               while(l + 1< r) {
+                   int mid = l +(r - l) / 2;
+                   int count = 0;
+                   for(int i = 0; i < nums.length; i++) {
+                       if(nums[i] <= mid)
+                           count ++;
+                   }
+                   if(count <= mid) l = mid;
+                   else r = mid;
+               }
+               int count = 0;
+               for(int num : nums) {
+                   
+                   if (num == l) {
+                       count ++;
+                   }
+               }
+               return count > 1 ? l : r;
+           }
+       }
