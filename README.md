@@ -22,8 +22,6 @@ Return the index of the search key,, if it is contained in the array within the 
 
 _Example: Russian Doll Envelopes_
 
-
-
 `static void sort(T[] a, Comparator<? super T> c`
 
 Sorts the specified array of objects according to the order induced by the specified comparator. All elements in the array must be
@@ -40,8 +38,6 @@ T - the type of objects that maybe compared by the comparator.
 
 Compares its two arguments for order. Returns a negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second.
 
-
-
 * **java.util.PriorityQueue&lt;E&gt;**
 
 Type Parameters:
@@ -51,4 +47,6 @@ E - the type of elements held in this collection
 `PriorityQueue(int initialCapacity, Comparator<? super E> comparator)`
 
 Creates a PriorityQueue with the specified initial capacity that orders its elements according to the specified comparator.
+
+_Example: Merge K Sorted Lists_
 
