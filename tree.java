@@ -1263,6 +1263,28 @@ public class Solution {
     }
     
 }
+/*
+ * DFS IN-ORDER TRAVERSAL~~~
+ * Use in oreder traversal to gaurantee ascending order,
+ * iterate each node and check if the value is in the range
+ */
+public class Solution {
+    public List<Integer> searchRange(TreeNode root, int k1, int k2) {
+        List<Integer> res = new ArrayList<>();
+        if (root == null) return res;
+        inorder(root, k1, k2, res);
+        return res;
+        
+    }
+    public void inorder(TreeNode root, int k1, int k2, List<Integer> res) {
+        if (root == null) return res;
+        inorder(root.left, k1, k2, res);
+        if (root.val >= k1 && root.val <= k2) {
+            res.add(root.val);
+        }
+        inorder(root.right, k1, k2, res);
+    }
+}
 
 // Subtree
 /*
