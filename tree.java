@@ -1395,8 +1395,11 @@ public class Solution {
 
 		for (int i = 0; i < len; i++) {
 			boolean[] marked = new boolean[len];
-			for (int j = 0; j < len; j++) {
-				marked[j] = false;
+			// the default value of boolean type is false
+			// we iterate through each node, all the nodes before current node shall not
+			// visitied twice, so we mark all previous nodes as visited.
+			for (int j = 0; j < i; j++) {
+				marked[j] = true;
 			}
 			dfs(A,marked,i);
 		}
