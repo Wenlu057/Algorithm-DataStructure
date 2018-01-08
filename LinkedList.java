@@ -435,3 +435,93 @@ public class Solution {
             }
     };
 }
+
+// LRU CACHE
+/* Data Structure Design*/
+/*
+ * Double linked list  + Hashmap<Integer, Node>
+ * Deletion, insertion from double linked list
+ * Move recently used one to front, move least used one to back
+ * Delete least used one to make room for the new one if the memory is full.
+ */
+public class LRUCache {
+    // double linked list
+    private class Node {
+        Node pre;
+        Node next;
+        int key;
+        int value;
+        public Node(int key, int value) {
+            this.key = key;
+            this.value = value;
+            this.pre = null;
+            this.next = null;
+        }
+    }
+    // we need create a head node and a tail node for searching the first node and last node in O(1)
+    // The hashmap contains all the nodes in the memory.
+    // The hashmap maps the double linkedlist.
+    private int capacity;
+    private HashMap<Integer, Node> hs  = new HashMap<Integer, Node>();
+    private Node dummy = new Node(0,0);
+    private Node tail = new Node(0,0);
+    /*
+    * @param capacity: An integer
+    */public LRUCache(int capacity) {
+        // do intialization if necessary
+       this.capacity = capacity;
+       tail.pre = dummy;
+       dummy.next = tail;
+    }
+
+    /*
+     * @param key: An integer
+     * @return: An integer
+     */
+    public int get(int key) {
+        // write your code here
+        // if the node exists in the memory, it exists in both linkedlist and hashmap.
+        // we can retrieve it from hashmap in O(1)
+        if (hs.containsKey(key)) {
+            // hashmap remains the same, adjust the position of the node in double linkedlist
+            Node node = hs.get(key);
+            remove_from_currPos(node); //delete a node from double linkedlist, given the position of the node.
+            move_to_head(node); // insert a node into the head of double linkedlist.
+            return hs.get(key).value; 
+        } else
+            return -1;
+    }
+
+    /*
+     * @param key: An integer
+     * @param value: An integer
+     * @return: nothing
+     */
+    public void set(int key, int value) {
+        
+        Node data = new Node(key, value);
+        // if the we can find the key from hashmap, it means one of the node in the memory has the same key with the new node. We are not sure if they have same value.
+        if (hs.containsKey(key)) {
+            Node node = hs.get(key); 
+            remove_from_currPos(node); // delete the node from double linkedlist before insertion.
+        } else if (hs.size() == capacity) { // if we reach here, it means the memory is full
+            // remove the last node in the linkedlist
+            hs.remove(tail.pre.key);
+            tail.pre = tail.pre.pre;
+            tail.pre.next = tail;
+        }
+        hs.put(key, data); // update the hashmap
+        move_to_head(data); // insert a node into the head of double linkedlist
+    }
+    private void move_to_head(Node node) {
+        Node tmp = dummy.next;
+        dummy.next = node;
+        node.pre = dummy;
+        node.next = tmp;
+        tmp.pre = node;
+    }
+    private void remove_from_currPos(Node node) {
+        node.pre.next = node.next;
+        node.next.pre = node.pre;
+    }
+}
