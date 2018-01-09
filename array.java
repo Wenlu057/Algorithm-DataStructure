@@ -88,6 +88,7 @@ public class Solution {
 }
 
 // Longest Consecutive Sequence
+// union find
 // Find the start point of one consecutive sequence, keep updating the gloabal longest streak
 // Solution 1 : O(n) time complexity + O(n) space complexity
 // HashMap + boolean array
@@ -215,5 +216,81 @@ public class Solution {
             }
         }
         return false;
+    }
+}
+
+// Number of islands
+// if we find one, count it and set all elements of this islands to 0 using dfs.
+class Solution {
+    public int numIslands(char[][] grid) {
+        if (grid.length == 0) return 0;
+        int count = 0;
+        for (int m = 0; m < grid.length; m++) {
+            for (int n = 0; n < grid[0].length; n++) {
+                if (grid[m][n] == '1') {
+                    count++;
+                    dfs(grid, m, n);
+                }
+            }
+        }
+        return count;
+
+    }
+    public void dfs(char[][] grid, int i, int j) {
+        if (i >=0 && i < grid.length && j >= 0 
+            && j < grid[0].length && grid[i][j] == '1') {
+            grid[i][j] = '0';
+            dfs(grid, i - 1, j);
+            dfs(grid, i + 1, j);
+            dfs(grid, i, j - 1);
+            dfs(grid, i, j + 1);
+        }
+    }
+}
+// Number of islandsII
+/*Uniton find , quick-union*/
+/*Referene http://www.cnblogs.com/SeaSky0606/p/4752941.html */
+/*The tricky part is the union operation, if you want to connect p and q
+ *append p to q? or append q to p?
+ *Time complexity will decrease if you append to a larger tree.
+ *Ex: one tree with root 4, (1, 4, 3, 5, 6)
+ *another tree with single node 10
+ *if you connect tree with root 4 to a single node tree, the tree height might increase. 
+ */
+class Solution {
+    private static int[][] neighbours = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+    private int[] id;
+    public List<Integer> numIslands2(int m, int n, int[][] positions) {
+        List<Integer> res = new ArrayList<>();
+        if (positions.length == 0)  return res;
+        if(m <= 0 || n <= 0) return res;
+        id = new int[m * n];
+        Arrays.fill(id, -1);
+        int count = 0;
+        for (int[] position : positions) {
+            int i = position[0];
+            int j = position[1];
+            int pID = n * i + j;
+            id[pID] = pID;
+            count++;
+            for (int[] neighbour : neighbours){
+                int r = i + neighbour[0];
+                int c = j + neighbour[1];
+                if (r < 0 || r >= m || c < 0 || c  >= n || id[n * r + c] == -1)  continue;
+                int qID = findRoot(n * r + c);
+                if (qID != -1 && qID != pID) {
+                    count--;
+                    id[pID] = qID; // current node connects to q node
+                    pID = qID; // don't forget to update the current value of pID                             
+                }
+            }
+            res.add(count);
+        }
+        return res;
+        
+    }
+    public int findRoot(int x) {
+        while (x != -1 && id[x] != x) x= id[x]; 
+        return x;
     }
 }
