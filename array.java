@@ -294,3 +294,74 @@ class Solution {
         return x;
     }
 }
+
+// K Empty Slots
+/* Solution 1 Brute Force*/
+public int kEmptySlots(int[] flowers, int k) { 
+        int minDay = flowers.length; 
+        for (int i = 1; i <= flowers.length - k; i++) { 
+            int slot1 = flowers[i - 1]; 
+            int slot2 = slot1 + k + 1;
+            if (slot2 > flowers.length) continue; 
+            int index2 = getIndex(slot2, flowers);  // get the index(bloom day) given slot
+            int lastIndex = Math.max(i, index2);
+            if (kNotBlooming(slot1, lastIndex, k, flowers)) { 
+                minDay = Math.min(minDay, Math.max(i, index2)); 
+            } 
+        } 
+        if (minDay == flowers.length) 
+        return -1; 
+        else return minDay; 
+    } 
+    public boolean kNotBlooming(int slot1, int index2, int k, int[] flowers) { 
+        for (int i = 1; i <= k; i++) { 
+             System.out.println(getIndex(slot1 + i, flowers));
+            if (getIndex(slot1 + i, flowers) <= index2) { 
+                return false; 
+            } // want to get the index and see if it is greater than index2 
+        } 
+        return true; 
+    } 
+    public int getIndex(int flower, int[] flowers) { 
+        for (int i = 0; i < flowers.length; i++) { 
+            if (flowers[i] == flower) { 
+                return i + 1; 
+            } 
+        } 
+        return -1; 
+    } 
+        
+}
+/* Solution 2 Use Hash Map*/
+/* If it is position sensitive, consider hashmap to store pos info,
+ * so you can get pos in constant time.
+ */
+public int kEmptySlots(int[] flowers, int k) { 
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < flowers.length; i++) {
+            map.put(flowers[i], i + 1);
+        } // key: slot value: index(bloom day)
+        int minDay = flowers.length; 
+        for (int i = 1; i <= flowers.length - k; i++) { 
+            int slot1 = flowers[i - 1]; 
+            int slot2 = slot1 + k + 1;
+            if (slot2 > flowers.length) continue; 
+            // int index2 = getIndex(slot2, flowers);  // get the index(bloom day) given slot
+            int index2 = map.get(slot2);
+            int lastIndex = Math.max(i, index2);
+            if (kNotBlooming(slot1, lastIndex, k, map)) { 
+                minDay = Math.min(minDay, Math.max(i, index2)); 
+            } 
+        } 
+        if (minDay == flowers.length) 
+        return -1; 
+        else return minDay; 
+    } 
+    public boolean kNotBlooming(int slot1, int index2, int k, HashMap<Integer, Integer> map) { 
+        for (int i = 1; i <= k; i++) { 
+            if (map.get(slot1 + i ) <= index2) { 
+                return false; 
+            } // want to get the index and see if it is greater than index2 
+        } 
+        return true; 
+    }         
