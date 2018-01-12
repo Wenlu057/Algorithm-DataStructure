@@ -220,6 +220,7 @@ public class Solution {
 }
 
 // Number of islands
+// matrix
 // if we find one, count it and set all elements of this islands to 0 using dfs.
 class Solution {
     public int numIslands(char[][] grid) {
@@ -364,4 +365,150 @@ public int kEmptySlots(int[] flowers, int k) {
             } // want to get the index and see if it is greater than index2 
         } 
         return true; 
-    }         
+    }      
+// The Skyline Problem
+/*List-like matrix*/
+/* Priority Queue to maintain a max-heap*/
+/* Array customized sort, comparator using Lambda expression*/
+/* Interval Problem with start point(x left postion) and end point(x right position)
+ * construct array in a format of [[x pos, height, start? end?]], sort the array
+ * Need to retrieve the max value in the heap and determine when is the critical point.
+ * If it is start point, add to the heap. If the max value changed, it is critial point.
+ * If it is end point, remove from the heap. If the max value changed, the curren max in the heap
+ * along with the current x pos is critial.
+ * Be careful about the edge cases! 
+ */
+class Solution {
+    public List<int[]> getSkyline(int[][] buildings) {
+        List<int[]> res = new ArrayList<>();
+        if (buildings == null ||buildings.length == 0) return res;
+        int[][] points = new int[buildings.length * 2][3];
+        for (int i = 0; i < buildings.length; i++) {
+            points[i * 2][0] = buildings[i][0];
+            points[i * 2][1] = buildings[i][2];
+            points[i * 2][2] = 1;
+            points[i * 2 + 1][0] = buildings[i][1];
+            points[i * 2 + 1][1] = buildings[i][2];
+            points[i * 2 + 1][2] = -1;
+        }
+        //lambda expression
+        Arrays.sort(points, (p1, p2) -> {
+                if (p1[0] == p2[0]) {
+                    // p1 and p2 are start points, point with heiger height first
+                    if (p1[2] == 1 && p2[2] == 1) return p2[1] - p1[1]; 
+                    // p1 and p2 are end points, point with lower height first
+                    else if (p1[2] == -1 && p2[2] == -1) return p1[1] -p2[1];
+                    // one is start point, one is end point, end point comes first
+                    else {
+                        if (p1[2] == -1) return 1;
+                        else return -1;
+                    }               
+                }
+                // smaller left x comes first
+                return p1[0] - p2[0];
+        });  
+        Queue<Integer> heap = new PriorityQueue<>((h1, h2) -> {
+            return h2 - h1; // max-heap
+        });
+        int max = 0;
+        for (int i = 0; i < points.length; i++) {
+            int x = points[i][0];
+            int h = points[i][1];
+            int flag = points[i][2];
+            System.out.println(h);
+            //start point
+            if (flag == 1) {
+                heap.offer(h);
+                int currMax = heap.peek();
+                if (currMax != max) {
+                    max = currMax;
+                    res.add(new int[]{x, h});
+                }
+            } else {
+                heap.remove(h);
+                if (heap.isEmpty()) {
+                    res.add(new int[] {x, 0});
+                } else {
+                    int currMax = heap.peek();
+                    if (currMax != max) {
+                        max = currMax;
+                        res.add(new int[]{x, currMax});
+                    }
+                }
+      
+            }
+        }
+        return res;
+    }
+}  
+
+// Range Sum Query 2D - Mutable
+// Solution 1 Brute force
+class NumMatrix {
+    int[][] matrix;
+    public NumMatrix(int[][] matrix) {
+        this.matrix = matrix;
+    }
+    
+    public void update(int row, int col, int val) {
+        matrix[row][col] = val;
+    }
+    
+    public int sumRegion(int row1, int col1, int row2, int col2) {
+        int sum = 0;
+        for (int i = row1; i <= row2; i++) {
+            for (int j = col1; j <= col2; j++) {
+                sum += matrix[i][j];
+            }
+        }
+        return sum;
+    }
+} 
+
+// Solution 2 Binary Indexed Tree
+/* How to build BIT for a matrix*/
+Class NumMatrix {
+    int[][] nums;
+    int[][] tree;
+    int m;
+    int n;
+    public NumMatrix(int[][] matrix) {
+        if (matrix.length == 0 || matrix[0].length == 0) return;
+        m = matrix.length;
+        n = matrix[0].length;
+        nums = new int[m][n];
+        tree = new int[m + 1][n + 1];
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                update(i, j, matrix[i][j]);
+            }
+        }
+    }
+    public void update(int row, int col, int val) {
+        if (m == 0 || n == 0) return;
+        int delta = val - nums[row][col];
+        nums[row][col] = val;
+        // Find the next in the BIT
+        for (int i = row + 1; i <= m; i += i & (-i)) {
+            for (int j = col + 1; j <= n; j += j & (-j)) {
+                tree[i][j] += delta;
+            }
+        }
+
+    }
+    public int sumRegion(int row1, int col1, int row2, int col2) {
+        if (m == 0 || n == 0) return;
+        return sum(row2 + 1, col2 + 1) + sum(row1, col1) 
+            - sum(row2 + 1, col1) - sum(row1, col2 + 1);
+    }
+    public int sum(int row, int col) {
+        int sum = 0;
+        // Find the parent until reaching the root in the BIT
+        for (int i = row; i > 0; i -= i & (-i)) {
+            for (int j = col; j > 0; j -= j & (-j)) {
+                sum += tree[i][j];
+            }
+        }
+        return sum;
+    }
+}
