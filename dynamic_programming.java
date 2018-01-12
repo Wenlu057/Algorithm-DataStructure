@@ -212,3 +212,204 @@ class Solution {
 		return max;
 	}
 }
+
+// Bomb Enemy
+/* Matrix*/
+/*Solution 1, Brute force*/
+/*Need to check the boundry, the wall position otherwise the edge
+ *First check the boundry, then count the killed enemies.	
+ */
+
+class Solution {
+    public int maxKilledEnemies(char[][] grid) {
+        if (grid == null || grid.length == 0) return 0;
+        int max = 0;
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if (grid[i][j] == '0') {
+                    int[] boundry = checkBoundry(grid, i, j);
+                    max = Math.max(max, helper(grid, i, j, boundry));
+                }
+            }
+        }
+        return max;
+    }
+    public int[] checkBoundry(char[][] grid, int i, int j) {
+        int[] res = new int[4];
+        res[0] = 0;
+        res[1] = grid.length;
+        res[2] = 0;
+        res[3] = grid[0].length;
+        for (int row = 0; row < grid.length; row++) {
+            if (grid[row][j] == 'W') {
+                if (row < i)
+                    res[0] = row;
+                if (row > i) {
+                    res[1] = row;
+                    break;
+                }
+            }
+        }
+        for (int col = 0; col  < grid[0].length; col ++) {
+            if(grid[i][col] == 'W') {
+                if (col < j)
+                    res[2] = col;
+                if (col > j) {
+                    res[3] = col;
+                    break;
+                }
+            }
+        }
+        return res;
+    }
+    public int helper(char[][] grid, int i, int j, int[] boundry) { 
+        int count = 0;
+        for (int row = boundry[0]; row < boundry[1]; row++) {
+            if (grid[row][j] == 'E' ) {
+             count++;   
+            }
+        }
+        for (int col = boundry[2]; col < boundry[3]; col++) {
+            if (grid[i][col] == 'E') {
+             count++;   
+            }
+        }
+        return count;
+    }
+}
+// Solution 2, do the boundry check and enemies count at the same time.
+class Solution {
+    public int maxKilledEnemies(char[][] grid) {
+        if(grid==null || grid.length==0|| grid[0].length==0) return 0;
+        int res=0;
+        for(int i=0; i<grid.length; i++ ){
+            for(int j=0; j<grid[0].length; j++){
+                if(grid[i][j]=='0')
+                    res = Math.max(res,helper(grid,i,j));
+            }
+        }
+        return res;
+    }
+    int helper(char[][]grid, int i, int j){
+        int res=0;
+        int ti=i, tj=j;
+        while(i>=0 && grid[i][j]!='W'){
+            if(grid[i--][j]=='E') res++;
+        }
+        i=ti;
+        while(j>=0 && grid[i][j]!='W'){
+            if(grid[i][j--]=='E') res++;
+        }
+        j=tj;
+        while(i<grid.length && grid[i][j]!='W'){
+            if(grid[i++][j]=='E') res++;
+        }
+        i=ti;
+        while(j<grid[0].length && grid[i][j]!='W'){
+            if(grid[i][j++]=='E') res++;
+        }
+        return res;
+    }
+  
+}
+
+// Solution 3, use DP to save column hits.
+class Solution {
+	public int maxKilledEnemies(char[][] grid) {
+		if (grid == null || grid.length == 0) return 0;
+		int M = grid.length;
+		int N = grid[0].length;
+		int[] colhits = new int[N];
+		int rowhits = 0;
+		int max = 0;
+		for (int i = 0; i < M; i++) {
+			for (int j = 0; j < N; j++) {
+				if (j == 0 || grid[i][j - 1] == 'W') {
+					rowhits = 0;
+					for (int k = j; k < N && grid[i][k] != 'W'; k++) {
+						rowhits += grid[i][k] == 'E'? 1: 0;
+					}
+				}
+				colhits[j] = 0;
+				if (i == 0 || grid[i -1][j] == 'W') {
+					for (int k = i; k < M && grid[k][j] != 'W'; k++) {
+						colhits[j] += grid[k][j] == 'E' ? 1 : 0;
+					}
+				}
+				if (grid[i][j] == '0') {
+					max = Math.max(max, rowhits + colhits[j]);
+				}
+			}
+		}
+		return max;
+	}
+}
+
+// Perfect Squares
+/* Solution 1, DP*/
+/*
+ * create an array with length of n + 1, we update the array until
+ * we get the nth element in the array which is the result.
+ * Each element in the array stores the least number of perfect squares.
+ * Initilize the array by update  all the perfect square within the range of n.
+ */
+class Solution {
+    public int numSquares(int n) {
+        if (n == 0) return 0;
+        if (n == 1) return 1;
+        int i = n/2;
+        for ( ; i > 0; i--) {
+            if (i * i <= n) {
+                break;
+            }
+        } 
+        int[] dp = new int[n + 1];
+        dp[0] = 0;
+        for(int j = 1; j <= i;j++) {
+            dp[j * j] = 1;
+        }
+
+        for (int k = 2; k < n + 1; k++) {
+            if (dp[k] == 0) {
+                for (int m = 1; m < k; m++) {
+                    if (dp[m] != 0 && dp[k - m] != 0) {
+                        if (dp[k] == 0) dp[k] = dp[m] + dp[k - m];
+                        else dp[k] = Math.min(dp[k], dp[m] + dp[k - m]);
+                    }
+                }
+            }
+        }
+        return dp[n];
+    }
+}
+
+/*Solution 2, DP*/
+/*Similar with solution 1.
+ *Iterate ALL the possibilities of the LAST perfect square number we add into current number.
+ * ---------(j = 1, 4, 9, .... until j * j <=currNum)-------------
+ *Whatever the last perfect suqare number is, we know the its result and the one which
+ *subtract that number from currNum.
+ */
+class Solution {
+    public int numSquares(int n) {
+        // Write your code here
+        int[] dp = new int[n + 1];
+        Arrays.fill(dp, Integer.MAX_VALUE);
+        // Remember this for loop format: i * i <= n!!!
+        for(int i = 0; i * i <= n; ++i) {
+            dp[i * i] = 1;
+        }
+
+        for (int i = 2; i <= n; ++i) {
+            if (dp[i] == Integer.MAX_VALUE){
+            	//Try to think in another way, try to find the last perfect square num.
+                for (int j = 1; j * j <= i; ++j) {
+                dp[i] = Math.min(dp[i], dp[i - j * j] + 1);
+                } 
+            }
+           
+        }
+
+        return dp[n];
+    }
+}
