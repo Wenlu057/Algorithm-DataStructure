@@ -121,4 +121,94 @@ public class Solution {
 
 		return length;
 	}
+}// Maximum Vacation Days
+/*Solution 1 Recursion, DFS using ArrayList as one argument of recursion call*/
+class Solution {
+    int MaxVacation = 0;
+    public int maxVacationDays(int[][] flights, int[][] days) {
+        if (flights == null || flights.length == 0 || days == null || days.length == 0) return 0;
+        int max = 0;
+        int lastCity = 0;
+        List<Integer> vacations = new ArrayList<>();
+        helper(0, 0, vacations, flights, days);
+        return MaxVacation;
+        
+    }
+    public void helper(int currWeek, int lastCity, List<Integer> vacations, int[][] flights, int[][] days) {
+        if (currWeek == days[0].length) {
+            int sum = 0;
+            for(int vacation : vacations) {
+                sum += vacation;
+            }
+            MaxVacation = Math.max(MaxVacation, sum);
+            return;
+        }
+        for (int i = 0; i < days.length; i++) {
+            if (flights[lastCity][i] != 0 || lastCity == i) {
+                vacations.add(days[i][currWeek]);
+                helper(currWeek + 1, i, vacations, flights, days);
+                vacations.remove(vacations.size() - 1);
+            }
+        }
+    }
+}
+/*Solution 1-1 Recursion, DFS using integer as one argument for the recursion*/
+class Solution {
+    int MaxVacation = 0;
+    public int maxVacationDays(int[][] flights, int[][] days) {
+        if (flights == null || flights.length == 0 || days == null || days.length == 0) return 0;
+        helper(0, 0, 0, flights, days);
+        return MaxVacation;
+        
+    }
+    public void helper(int week, int curr, int sum, int[][] flights, int[][] days) {
+        //sum = 0 - loop1, sum = 1 - loop2, sum = 4 - loop3, sum = 5 -loop4
+        if (week == days[0].length) {
+            MaxVacation = Math.max(MaxVacation, sum);
+            return;
+        }
+        // for recursion, we go deeper each time, and only execute once for the for loop.
+        // when you reach the end and return to the upper level to execute the second time of the for loop,
+        // we hope the result keeps the same as if the recursion call doesn't change anything!
+        // this is the key point of backtracking!!!!!!
+        for (int dest = 0; dest < days.length; dest++) {
+            if (flights[curr][dest] != 0 || curr == dest) {
+                // sum += days[dest][week]; // sum = 1 - loop1, sum = 4 -loop2, sum = 5 - loop3
+                helper(week + 1, dest, sum + days[dest][week], flights, days);
+                // loop4 returns to loop3, sum is 5!! it will cause error. we want it to be 4.
+            }
+        }
+    }
+}
+
+/*Solution 2 Dynamic Programming, dp[k] represents the max vacation days
+ *we can get until week i, for i = 0 ... total weeks. Update the dp array
+ *and overide the val in each loop.
+ */
+class Solution {
+	public int maxVacationDays(int[][] flights, int[][] days) {
+		int[] dp = new int[flights.length];
+		Arrays.fill(dp, Integer.MIN_VALUE);
+		dp[0] = 0; // entry point
+		for (int week = 0; week < days[0].length; week++) {
+			int[] tmp = new tmp[flights.length];
+			Array.fill(tmp, Integer.MIN_VALUE);
+			for (int currCity = 0; currCity < flights.length; currCity++) {
+				// update tmp[currCity]
+				for (int preCity = 0; preCity < flights.length; preCity++) {
+					if(currCity == preCity || flights[preCity][currCity] == 1){
+						tmp[currCity] = Math.max(tmp[currCity], 
+							days[currCity][week] + dp[preCity])
+					}	
+				}
+				// get the max vacation days if stays in currCity at week 0 .. N
+				dp = tmp; // update dp
+			}
+		}
+		int max = 0;
+		for (int v : dp) {
+			max = Math.max(max, v);
+		}
+		return max;
+	}
 }

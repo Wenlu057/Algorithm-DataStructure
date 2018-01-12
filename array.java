@@ -441,7 +441,39 @@ class Solution {
         return res;
     }
 }  
-
+// Sliding Window Maximum
+/* Maitain a Max-heap, initialize the heap, remove first one from heap 
+ * and add next one into heap.
+ * Spetial Case Handling: sliding window size = string length
+ * After the sliding is complete, don't forget to add the last one into result.
+ */
+class Solution {
+    public int[] maxSlidingWindow(int[] nums, int k) {
+        if (nums == null || nums.length == 0 || k == 0) return new int[]{};
+        int[] res = new int[nums.length + 1 - k];
+        Queue<Integer> heap = new PriorityQueue<>(k, (n1, n2) -> {
+            return n2 - n1;
+        });
+        int start = 0;
+        for (int i = 0; i < k; i++) {
+            heap.add(nums[i]);
+        }
+        // if k is equal to the nums length, the slidingwendow will not move
+        // it only returns the global max value.
+        if (nums.length == k) {
+            res[start] = heap.peek();
+            return res;
+        }
+        for (int i = k; i < nums.length; i++) {
+            res[start] = heap.peek();
+            heap.remove(nums[start]);
+            heap.add(nums[i]);
+            start++;
+        }
+        res[start] = heap.peek(); // don't forget the last element!
+        return res;
+    }
+}
 // Range Sum Query 2D - Mutable
 // Solution 1 Brute force
 class NumMatrix {
