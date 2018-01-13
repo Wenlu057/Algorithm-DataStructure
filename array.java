@@ -474,6 +474,35 @@ class Solution {
         return res;
     }
 }
+// Moving Average from Data Stream 
+/*Sliding window, Maintain average value, O(1) complexity*/
+class MovingAverage {
+
+    /** Initialize your data structure here. */
+    int[] window;
+    int count;
+    double sum;
+    public MovingAverage(int size) {
+        window = new int[size];
+        count = 0;
+        sum = 0;
+    }
+    
+    public double next(int val) {
+        if (count < window.length) {
+            window[count] = val;
+            sum += val;
+            count++;
+            return sum / count;
+        } else {
+            int tmp = window[count % window.length];
+            window[count % window.length] = val;
+            sum += val - tmp;
+            count++;
+            return sum / window.length;
+        }
+    }
+}
 // Range Sum Query 2D - Mutable
 // Solution 1 Brute force
 class NumMatrix {

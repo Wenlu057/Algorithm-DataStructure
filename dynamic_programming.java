@@ -413,3 +413,46 @@ class Solution {
         return dp[n];
     }
 }
+
+// Paint Fence 
+/* create dp array, which represents number of painting ways for previous i posts 
+ * with  color j for the last post.
+ * regarding previous i posts, the number of ways are the same for each  end color
+ */
+class Solution {
+    public int numWays(int n, int k) {
+        if (k == 0 || n == 0) return 0;
+        if (n == 1) return k;
+        int[] dp = new int[n + 1];
+        dp[0] = 0;
+        dp[1] = 1; 
+        dp[2] = k; 
+        for (int i = 3; i <= n; i++){ 
+            dp[i] = dp[i - 1] * (k -1) + dp[i - 2] * (k - 1);
+        }
+        return dp[n] * k;
+    }
+}
+
+/*Optimized solution with constant space complexity*/
+public class Solution {
+    /**
+     * @param n non-negative integer, n posts
+     * @param k non-negative integer, k colors
+     * @return an integer, the total number of ways
+     */
+    public int numWays(int n, int k) {
+        // Write your code here
+        int dp[] = {0, k , k*k, 0};
+        if(n <= 2)
+            return dp[n];
+        if (k == 1)
+            return 0;
+        for(int i = 2; i < n; i++) {
+            dp[3] = (k - 1) * (dp[1] + dp[2]);
+            dp[1] = dp[2];
+            dp[2] = dp[3];
+        }
+        return dp[3];
+    }
+}
