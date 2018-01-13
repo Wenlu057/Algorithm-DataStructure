@@ -133,5 +133,149 @@ class Solution {
             square.remove(square.size() - 1);
         }
     }
-   
+}
+
+// Next Closest Time
+/* Character -> Integer, HashSet, ArrayList, Collections.sort*/
+class Solution {
+	public String nextClosestTime(String time) {
+		//extract digits from time
+		char[] digits = new char[4];
+		// we know the position of each digit!!! Don't use substring, or 
+		// try to check if it is digist by iterating the whole string.
+		digits[0] = time.charAt(0);
+		digits[1] = time.charAt(1);
+		digits[2] = time.charAt(3);
+		digits[3] = time.charAt(4);
+		// at this point, we get all the digits included in the time
+		// what we can do using these digist?
+		// We can iterate all the possibilities by 4 loops.
+		// Store all the valid time into HashSet. Why hashset?
+		// It can remove the duplicates instead of using arraylist, but no order sequence is guaranteed.
+		Set<String> set = new HashSet<>();
+		for (int i = 0; i < 4; i++ ) {
+			for (int j = 0; j < 4; j++) {
+				for (int k = 0; k < 4; k++) {
+					for (int l = 0; l < 4; l++) {
+						//for each possibility we do the following
+						String candidate = "" + digits[i] + "" + digits[j] 
+							+ ":" +digists[k] + "" + digists[l];
+						if (isValidTime(candidate)) {
+							//Adds the specified element to this set if it is not already present.
+							set.add(candidate);
+						}
+
+					}
+				}
+			}
+		}
+		//Restore all into arraylist, sort it to get order info.
+		List<String> ls = new ArrayList<>();
+		ls.addAll(set);
+		Collections.sort(ls);
+		// in a arraylist, how to get the index of a specified target?
+		int index = timList.indexOf(time);
+		return index == ls.size() - 1 ? ls.get(0) : list.get(index + 1);
+
+	}
+	public boolean isValidTime(String candidate) {
+		// get the hour and minute
+		int hour = Integer.parseInt(candidate.substring(0, 2));
+		int minute = Integer.parseInt(candidate.substring(3, 5));
+		// validate the time.
+		return hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59
+	}
+}
+
+// Decode String
+/*Solution 1, use stack to check the outer ']', divide and conquer*/
+/*If we found 1 decode string, divide it as subproblem*/
+class Solution {
+    public String decodeString(String s) {
+        if (s.length() == 0) return "";
+        return helper(s, 0, s.length() - 1);
+       
+    }
+    public String helper(String s, int start, int end) {
+         String res = "";
+         for (int i = start; i <= end; i++) {
+            char ch = s.charAt(i);
+            if (Character.isLetter(ch)) {
+                res += ch;
+            } else if (Character.isDigit(ch) && (i==0 || !Character.isDigit(s.charAt(i - 1))) ){
+            	//tricky part, need to check if the previous one is digit!! the number could have more than 1 digit.
+                int j = i;
+                int st = i;
+                Stack<Character> stack = new Stack<>();
+                for (; j <= end; j++) {
+                    if (s.charAt(j) == '[') {
+                        if (stack.isEmpty()) {
+                            st = j;
+                        }
+                        stack.push('[');
+                    } else if (s.charAt(j) == ']') {
+                        stack.pop();
+                        if (stack.isEmpty()) {
+                            break;
+                        }
+                        
+                    }
+                }
+                String tmp =helper(s, st + 1, j - 1);
+                String num = s.substring(i, st);
+                for (int k = 1; k < Integer.parseInt(num); k++) {
+                    res += tmp;
+                }
+            }
+        }
+        return res;
+    }
+}
+
+/*Solution 2*/
+/*
+ *using 2 stack, one stores the count, one stores the substring before the '[',
+ *use a variable to save current substring within the inner brackets.
+ *Example: 3[a2[c]]
+ *Start with [c], current substring within the inner brackets : 'c',
+ *Decode the inner brackets, find the prefix by poping the string stack,
+ *find the k by poping the count stack, replace it by acc.
+ *use the same way to decode the outer brackets and replace it by accaccacc.
+ */
+public class Solution {
+    public String decodeString(String s) {
+        String res = "";
+        Stack<Integer> countStack = new Stack<>();
+        Stack<String> resStack = new Stack<>();
+        int idx = 0;
+        while (idx < s.length()) {
+            if (Character.isDigit(s.charAt(idx))) {
+                int count = 0;
+                while (Character.isDigit(s.charAt(idx))) {
+                    count = 10 * count + (s.charAt(idx) - '0');
+                    idx++;
+                }
+                countStack.push(count);
+            }
+            else if (s.charAt(idx) == '[') {
+                resStack.push(res);
+                res = ""; // don't forget to reset the res
+                idx++;
+            }
+            else if (s.charAt(idx) == ']') {
+                System.out.println(res);
+                StringBuilder temp = new StringBuilder (resStack.pop());
+                int repeatTimes = countStack.pop();
+                for (int i = 0; i < repeatTimes; i++) {
+                    temp.append(res);
+                }
+                res = temp.toString();
+                idx++;
+            }
+            else {
+                res += s.charAt(idx++);
+            }
+        }
+        return res;
+    }
 }
