@@ -376,3 +376,44 @@ public class Codec {
 		retu  res;
 	}
 }
+
+// Group Shifted Strings
+/* Group
+ * Each group have same key value which the string shifts back to the begining.
+ * So we decide to use hashmap to maintain key-value set. 
+ * The key is a string starts with 'a', value is a arraylist which contains all the strings 
+ * with same shifting sequence.
+ * Notice: "az" and "ba" belong to same group.
+ */
+class Solution {
+    public List<List<String>> groupStrings(String[] strings) {
+        List<List<String>> res = new ArrayList<>();
+        if (strings.length == 0) return res;
+        HashMap<String, List<String>> map = new HashMap<>();
+        for (int i = 0; i < strings.length; i++) {
+            String sequence = getInitialSequence(strings[i]);
+            if (map.containsKey(sequence)) {
+                map.get(sequence).add(strings[i]);
+            } else {
+                List<String> tmp = new ArrayList<>();
+                res.add(tmp);
+                tmp.add(strings[i]);
+                map.put(sequence, tmp);
+            }
+        }
+        // for (String key : map.keySet()) {
+        //     res.add(map.get(key));
+        // }
+        return res;
+    }
+    public String getInitialSequence(String str) {
+        if (str.length() == 1) return "a";
+        int gap = str.charAt(0) - 'a';
+        StringBuilder sb = new StringBuilder();
+        for (char ch : str.toCharArray()) {
+            int val = ch - gap + (ch - gap < 97 ? 26 : 0);
+            sb.append((char)val);
+        }
+        return sb.toString();
+    }
+}
