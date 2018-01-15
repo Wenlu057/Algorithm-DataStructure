@@ -279,3 +279,100 @@ public class Solution {
         return res;
     }
 }
+// Add Bold Tag in String
+/*Interval Overlapping, First Position and Last position of overlapping chunks matters*/
+/*Use a boolean array to mark all char in a substring to true if this substring exists in the dict*/
+/*Solution 1*/
+/*
+ *Use recursion to update the boolean array
+ *Determine the position of <br> and </br> and insert it into string.
+ */
+class Solution {
+    public String addBoldTag(String s, String[] dict) {
+        boolean[] marked = new boolean[s.length()];
+        for (String word : dict) {
+            helper(s, word, 0, marked);
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < s.length(); i++) {
+            if (marked[i] && (i == 0 || !marked[i - 1])) {
+                sb.append("<b>");
+            }
+            if (!marked[i] && (i != 0 && marked[i - 1])) {
+                sb.append("</b>");
+            }
+            sb.append(s.charAt(i));
+        }
+        if (marked[s.length() - 1]) {
+            sb.append("</b>");
+        }
+        return sb.toString();
+    }
+    private void helper(String s, String word, int start, boolean[] marked) {
+        int index = s.indexOf(word, start);
+        if (start + word.length() > s.length() || index == -1) return;
+        else {
+            for (int i = index; i < index + word.length(); i++) {
+                marked[i] = true;
+            }
+            helper(s, word, start + 1, marked);
+        }
+    }
+    
+}
+/*Solution 2*/
+/*
+ *Use while loop, use idx as both an argument and return value.
+ *Determine the substring wrapper by bold tag, insert them together into string.
+ */
+class Solution {
+    public String addBoldTag(String s, String[] dict) {
+        boolean[] bold = new boolean[s.length()];
+        for (String word : dict) {
+            int idx = s.indexOf(word);
+            while (idx != -1) {
+                for (int i = idx; i < idx + word.length(); i++)
+                    bold[i] = true;
+                idx = s.indexOf(word, idx + 1);
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < s.length();) {
+            if (!bold[i]) {
+                sb.append(s.charAt(i++));
+            } else {
+                sb.append("<b>");
+                while (i < s.length() && bold[i])
+                    sb.append(s.charAt(i++));
+                sb.append("</b>");
+            }
+        }
+        return sb.toString();
+    }
+}
+// Encode and Decode Strings
+/*StringBuilder, store the length and content for each string with a splitter*/
+public class Codec {
+	// Encodes a list of strings to a single string.
+	public String encode(List<String> strs) {
+		StringBuilder sb = new StringBuilder();
+		for (String s : strs) {
+			sb.append(s.length()).append('/').append(s);
+		}
+		return sb.toString();
+	}
+	// Decodes a single string to a list of strings.
+	public List<String> decode(String s) {
+		List<String> res = new ArrayList<>();
+		int i = 0;
+		while (i < s.length()) {
+			// the first occurence of '/' is splitter, it couldn't be '/' in original strs.
+			// every time the i jumps to next word to avoid getting the '/' in original strs.
+			int slash = s.indexOf('/', i);
+			int size = Integer.valueOf(s.substring(i, slash));
+			res.add(s.substring(slash + 1, slash + size + 1));
+			i = slash + size + 1;
+		}
+		retu  res;
+	}
+}
