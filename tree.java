@@ -1946,3 +1946,136 @@ public class Solution {
         return root;
     }
 }
+// Binaray Tree Longest Consecutive Sequence
+/*Solution 1 Divide and Conquer*/
+class Solution {
+    public int longestConsecutive(TreeNode root) {
+        if (root == null) return 0;
+        if (root.left == null && root.right == null) return 1;
+        int max = 1;
+        TreeNode it = root;
+        while (it != null) {
+            int target = it.val + 1;
+            if (it.left != null && it.left.val == target) {
+                max++;
+                it = it.left;
+            } else if (it.right != null && it.right.val == target) {
+                max++;
+                it = it.right;
+            } else {
+                break;
+            }
+        }
+        return Math.max(max, Math.max(longestConsecutive(root.left), longestConsecutive(root.right)));
+    }
+}
+
+/*Solution2 Maintain a global max*/
+class Solution {
+    int globalMax = 0;
+    public int longestConsecutive(TreeNode root) {
+        if (root == null) return 0;
+        if (root.left == null && root.right == null) return 1;
+        helper(root);
+        return globalMax;
+    }
+    public void helper(TreeNode root) {
+        if (root == null) return;
+        int max = 1;
+        TreeNode it = root;
+        while (it != null) {
+            int target = it.val + 1;
+            if (it.left != null && it.left.val == target) {
+                max++;
+                it = it.left;
+            } else if (it.right != null && it.right.val == target) {
+                max++;
+                it = it.right;
+            } else {
+                break;
+            }
+        }
+        // System.out.println(max);
+        globalMax = Math.max(max, globalMax);
+        longestConsecutive(root.left);
+        longestConsecutive(root.right);
+    }
+}
+
+/*Solution 3 fastest! dfs without calculate current maxLen 
+ *using iterative way in each recursion call. Pass the target value and
+ *current value as arguments.
+ */
+class Solution {
+    private int max = 0;
+    public int longestConsecutive(TreeNode root) {
+        if(root == null)
+            return 0;
+        inorder(root, 0, root.val);
+
+     return max;               
+    }
+    
+    public void inorder(TreeNode root, int current, int target){
+        if(root == null)
+            return;
+        
+        if(root.val == target)
+            current++;
+        else{
+            current = 1;
+        }
+        max = Math.max(current, max);
+        inorder(root.left, current, root.val+1);        
+        inorder(root.right,current, root.val+1);
+    }
+}
+
+// Longest Univalue Path
+/* DFS to traverse all tree nodes, get longest univalue path for each note*/
+class Solution {
+    private int maxLen = 0;
+    public int longestUnivaluePath(TreeNode root) {
+        if (root == null) return 0;
+        dfs(root);
+        return maxLen - 1;
+    }
+    public void dfs (TreeNode root) {
+        if (root == null) return;
+        helper(root, root.val);
+        dfs(root.left);
+        dfs(root.right); 
+    }
+    public int helper(TreeNode root, int val) {
+        if (root == null || root.val != val) return 0;
+        int left = helper(root.left, val);
+        int right = helper(root.right, val);
+        maxLen = Math.max(maxLen,left + right + 1);
+        return Math.max(left, right) + 1;
+    }
+
+}
+/*Solution 2*
+/*Divide and Conquer, pass the <!--PARENT--!> value into recursion,
+ *compare the current node value with parent value.
+ */
+class Solution {
+    int len=0;
+    public int longestUnivaluePath(TreeNode root) {
+        if(root==null) return 0;
+        getLen(root, root.val);
+        return len;
+    }
+    private int getLen(TreeNode root, int val) {
+        // return single path
+        if(root==null) return 0;
+        int left=getLen(root.left, root.val); // pass the parent value
+        int right=getLen(root.right, root.val);
+        len=Math.max(len, left+right); // left single path + right single path = maxPath
+        if(val==root.val) { // if the current value equals parent's value
+            return Math.max(left, right)+1; // single path
+        }
+        return 0;
+    }
+
+}
