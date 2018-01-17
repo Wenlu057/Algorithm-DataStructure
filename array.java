@@ -573,3 +573,78 @@ Class NumMatrix {
         return sum;
     }
 }
+
+// Random Pick Index
+/*Reservoir Sampling*/
+/**
+ * Your Solution object will be instantiated and called as such:
+ * Solution obj = new Solution(nums);
+ * int param_1 = obj.pick(target);
+ */
+/* 
+For the ith item in the stream, where i is index of current item in stream,
+the possibility that we pick the ith item is 1/i, we continue consider all elements 
+after i one by one until k. For the next item after i, the possibility that the i+1 th
+element is not selected is i/i+1. Similarly for the next one,  it's i+1/ i+2.
+So when we finish run through all k items, the possibility that the result is ith element is:
+1/i * i/i+1 * i+1/i+2 *....* k-1/k = 1/k. We successfully implement equal opportunity for each
+item from 0 to k.
+*/
+class Solution {
+    int[] nums;
+    public Solution(int[] nums) {
+        this.nums = nums;
+    }
+    
+    public int pick(int target) {
+        int res = -1;
+        Random random = new Random();
+        int count = 1;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] == target) {
+                // First time only 1 elment, we return the index of that one,
+                // count all targets found until now, randomly pick one, possibility is 1/count, do the replacement.
+                if (random.nextInt(count++) == 0) {
+                    res = i;
+                }
+            }
+        }
+        return res;
+    }
+}
+
+// Linked List Random Node
+/*Reservoir Sampling*/
+class Solution {
+
+    /** @param head The linked list's head.
+        Note that the head is guaranteed to be not null, so it contains at least one node. */
+    ListNode head;
+    public Solution(ListNode head) {
+        this.head = head;
+    }
+    
+    /** Returns a random node's value. */
+    public int getRandom() {
+        Random random = new Random();
+        int count = 1; 
+        ListNode nodeVal = head;
+        ListNode it = head;
+        while (it != null) {
+            // increment count in each time.
+            // randomly pick one 
+            if (random.nextInt(count++) == 0) {
+                nodeVal = it;
+            }
+            it = it.next;
+        }
+
+        return nodeVal.val;
+    }
+}
+
+/**
+ * Your Solution object will be instantiated and called as such:
+ * Solution obj = new Solution(head);
+ * int param_1 = obj.getRandom();
+ */
