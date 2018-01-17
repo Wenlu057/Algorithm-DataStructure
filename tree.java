@@ -2079,3 +2079,38 @@ class Solution {
     }
 
 }
+
+// Interview Question
+/*
+You are given a binary tree and a function shouldBeErased(node)
+ to check whether a node should be erased. Erase all nodes that 
+ should be erased in the binary tree and return the resulting 
+ forest in the form of an array of every root node.
+*/
+
+ public List<TreeNode> erase(TreeNode root) {
+    List<TreeNode> res = new ArrayList<>();
+    helper(root, res, true);
+    return res;
+ }
+ // Because we need to modify the tree, the helper function should 
+ // return a treenode
+ public TreeNode helper(TreeNode node, List<TreeNode> res, boolean marked) {
+  // a boolean value to mark if the parent node is erased.
+  if (node == null) return null;
+  // if the current node should be erased, we go deeper, mark the erased flag to be true.
+  // we want to add the left node and right node into list if current is erased.
+  if (shouldBeErased(node)) {
+      helper(node.left, res, true);
+      helper(node.right, r4es, true);
+      // because it is erased, the parent of current node connects to null instead
+      return null;
+  } else {
+      if (marked) {
+        res.add(node);
+      }
+      node.left = helper(node.left, res, false);
+      node.right = helper(node.right, res, false);
+      return node;
+  }
+ }
