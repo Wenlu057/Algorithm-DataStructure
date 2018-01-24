@@ -648,3 +648,171 @@ class Solution {
  * Solution obj = new Solution(head);
  * int param_1 = obj.getRandom();
  */
+
+//------------------------------------------------------------------//
+/*Basic Array Questions Simple - Medium Level*/
+//Moves Zeroes
+/*Move all nozeroes forward*/
+public class Solution {
+    public void moveZeroes(int[] nums) {
+        if (nums == null || nums.length == 0) return;
+        int index = 0;
+        for (int num : nums) {
+            if (num != 0)
+                nums[index++] = num;
+        }
+        for (int i = index; i < nums.length; i++) {
+            nums[i] = 0;
+        }
+    }
+}
+//Intersections of Two Arrays II
+/*Solution 1 HashMap*/
+public class Solution {
+    public int[] intersect(int[] nums1, int[] nums2) {
+        if (nums1.length == 0 || nums2.length == 0)
+            return new int[]{};
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for (int num : nums1) {
+            if (!map.containsKey(num))
+                map.put(num, 1);
+            else 
+                map.put(num, map.get(num) + 1);
+        }
+        List<Integer> res = new ArrayList<>();
+        for (int num : nums2) {
+            if (map.containsKey(num) && map.get(num) > 0) {
+                res.add(num);
+                map.put(num, map.get(nums) - 1);
+            }
+        }
+        int[] arr = new int[res.size()];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = res.get(i);
+        }
+        return arr;
+    }
+}
+/*Solution 2 Sort, Two Pointers*/
+public class Solution {
+    public int[] intersect(int[] nums1, int[] nums2) {
+        if (nums1.length == 0 || nums2.length == 0)
+        return new int[]{};
+        List<Integer> res = new ArrayList<>();
+        Arrays.sort(nums1);
+        Arrays.sort(nums2);
+        int i1 = 0;
+        int i2 = 0;
+        while (i1 < nums1.length && i2 < nums2.length) {
+            if (nums1[i1] == nums2[i2]) {
+                res.add(nums1[i1]);
+                i1++;
+                i2++;
+            } else if (nums1[i1] < nums2[i2]) {
+                i1++;
+            } else {
+                i2++;
+            }
+        }
+        int[] arr = new int[res.sie()];
+        for (int i = 0; i < arr.length; i++)
+            arr[i] = res.get(i);
+        return arr;
+    } 
+}
+//3 Sum
+/*Two pointers*/
+public class Solution {
+    public List<List<Integer>> threeSum(int[] nums) {
+        List<List<Integer>> res = new ArrayList<>();
+        if (nums == null || nums.length == 0) return res;
+        Arrays.sort(nums);
+        if (nums.length < 3) return res;
+        if (nums[0] > 0 || nums[nums.length - 1] < 0) return res;
+        for (int i = 0; i < nums.length - 2; i++) {
+            if (i == 0 || nums[i] != nums[i - 1]) {
+                int target = -nums[i];
+                int start = i + 1;
+                int end = nums.length - 1;
+                while (start < end) {
+                    if (nums[start] + nums[end] == target) {
+                        res.add(Arrays.asList(nums[i], nums[start++], nums[end--]));
+                        while (start < end && nums[start] == nums[start - 1]) start++;
+                        while (start < end && nums[end] == nums[end + 1]) end--;
+                    } else if (nums[start] + nums[end] < target) {
+                        start++;
+                    } else {
+                        end--;
+                    }
+                }
+            }
+        }
+        return res;
+    }
+}
+
+//Minimum Size Subarray Sum
+/*Solution 1 two pointers*/
+public class Solution {
+    public int minSubArrayLen(int s, int[] nums) {
+        if (nums == null || nums.length == 0) return 0;
+        int min = Integer.MAX_VALUE;
+        int sum = 0;
+        int start = 0;
+        int i = 0;
+        while (i < nums.length) {
+            while (i < nums.length && sum < s) sum += nums[i++];
+            if (sum < s) break;
+            while (start < i && sum >= s) sum -= nums[start++];
+            min = Math.min(min, i - start + 1);
+        }
+        return min == Integer.MAX_VALUE ? 0 : min;
+    }
+}
+/*Solution 2, maintain sum array, binary search*/
+public class Solution {
+    public int minSubArrayLen(int s, int[] nums) {
+        if (nums == null || nums.length == 0) return 0;
+        int min = Integer.MAX_VALUE;
+        int[] sum = new int[nums.length + 1];
+        for (int i = 1; i < sum.length; i++)
+            sum[i] = sum[i - 1] + nums[i - 1];
+        for (int i = 0; i < sum.length; i++) {
+            if (sum[i] + s <= sum[nums.length]) {
+                int end = binarySearch(sum, i + 1, nums.length, sum[i] + s);
+                min = Math.min(min, end - i);
+            }
+        }
+        return min == Integer.MAX_VALUE ? 0 : min;
+    }
+    private int binarySearch(int[] sum, int i, int j, int key) {
+        while (i + 1 < j) {
+            int mid = i + (j - i) / 2;
+            if (sum[mid] == key) return mid;
+            else if (sum[mid] < key) i = mid;
+            else j = mid;
+        }
+        if (sum[i] > key) return i;
+        else return j;
+    }
+}
+// Maximum Size Subarray Sum Equals K
+/* HashMap key: sum value : index*/
+public class Solution {
+    public int maxSubArrayLen(int[] nums, int k) {
+        if (nums == null || nums.length == 0) return 0;
+        HashMap<Integer, Integer> map = new HashMap<>();
+        int max = 0;
+        int sum = 0;
+        for (int i = 0; i < nums.length; i++) {
+            sum += nums[i];
+            if (!map.containsKey(sum)) map.put(sum, i);
+            if (sum == k) {
+                max = i + 1;
+            } else if (map.containsKey(sum - k)) {
+                max = Math.max(max, i - map.get(sum - k));
+            }
+        }
+        return max;
+    }
+}
