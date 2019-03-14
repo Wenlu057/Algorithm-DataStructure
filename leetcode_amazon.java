@@ -240,3 +240,31 @@ class Solution {
         return -1;
     }
 }
+
+/*Trapping Rain Water*/
+
+//hard to understand
+//how much water current unit is able to trap depends on the smaller one of the max vals on both sides.
+//update left max val and right max val by one pass.
+
+class Solution {
+    public int trap(int[] height) {
+        int left = 0;
+        int right = height.length;
+        int leftMax = 0;
+        int rightMax = 0;
+        int total = 0;
+        while (left < right) {
+            if (height[left] < height[right]) {
+                leftMax = Math.max(leftMax, height[left]);
+                total += leftMax - height[left];
+                left++;
+            } else {
+                rightMax = Math.max(rightMax, height[right]);
+                total += rightMax - height[right];
+                right--;
+            }
+        }
+        return  total;
+    }
+}
