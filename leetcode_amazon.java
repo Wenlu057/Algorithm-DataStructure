@@ -308,3 +308,27 @@ class MedianFinder {
         }
     }
 }
+
+/*2. Add Two Numbers*/
+
+public class Solution {
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        ListNode pt1 = l1;
+        ListNode pt2 = l2;
+        ListNode dummy = new ListNode(-1);
+        ListNode pt = dummy;
+        int carry = 0;
+        while (pt1 != null || pt2 != null || carry != 0) {
+            int num1 = pt1 == null ? 0 : pt1.val;
+            int num2 = pt2 == null ? 0 : pt2.val;
+            int digit = (num1 + num2 + carry) % 10;
+            carry = (num1 + num2 + carry) / 10;
+            ListNode node = new ListNode(digit);
+            pt.next = node;
+            pt = pt.next;
+            pt1 = pt1 == null ? null : pt1.next;
+            pt2 = pt2 == null ? null : pt2.next;
+        }
+        return dummy.next;
+    }
+}
