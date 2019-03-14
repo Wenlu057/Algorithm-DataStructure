@@ -268,3 +268,43 @@ class Solution {
         return  total;
     }
 }
+
+/*Find Median from Data Stream*/
+
+/*use max heap to store left half, use min heap to store right half
+* keep balanced, which means the diffence of two heaps is less than 2.
+* if the data stream is odd, return the max val of the left half, else get one from left
+* and get one from right, calculate the average.
+* */
+
+// time complexity, each operation O(lgn) * n data = nlg(n)
+class MedianFinder {
+    PriorityQueue<Integer> left;
+    PriorityQueue<Integer> right;
+    public MedianFinder() {
+        left = new PriorityQueue<Integer>((a, b) -> (b - a));
+        right = new PriorityQueue<Integer>((a, b) -> (a - b));
+
+    }
+    public void addNum(int num) {
+        if (left.isEmpty() || num <= left.peek()) {
+            left.add(num);
+        } else {
+            right.add(num);
+        }
+
+        if (left.size() < right.size()) {
+            left.add(right.remove());
+        } else if (left.size() - right.size() == 2) {
+            right.add(left.remove());
+        }
+    }
+
+    public double findMedian() {
+        if (left.size() > right.size()) {
+            return left.peek();
+        } else {
+            return (double)(left.peek() + right.peek()) / 2;
+        }
+    }
+}
