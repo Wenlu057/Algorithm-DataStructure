@@ -164,3 +164,79 @@ class Solution {
         }
     }
 }
+
+/*Cut Off Trees for Golf Event*/
+
+// the requirement is cut from the lowest height first starting from the origh,
+// what you really need to do is sort the height of trees in ascending order.
+// After that, you just need to find the path from origh to 1st shortest tree, to 2nd shorted,..etc
+// you could use bfs to get the steps from ith tree to the next.
+
+
+//Notes, bfs use queue to store elements in each level, each time in the loop you increment the level,
+//You really don't want to go back to the elments you already visited, so you need to record all those
+//visited elements.  Key idea is BFS is expanding from the center, for each element in each level, it goes
+//to 4 directions.
+
+
+class Solution {
+    public int cutOfTree(List<List<Integer>> forest) {
+        if (forest == null || forest.size() == 0) {
+            return -1;
+        }
+        int m = forest.size(); // how many rows
+        int n = forest.get(0).size(); // how many columns
+
+        // store the trees in a heap, each tree element is an array with x coordinate, y coordinate, height.
+        PriorityQueue<int[]> trees = new PriorityQueue<>((a, b) -> (a[2] - b[2]));
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (forest.get(i).get(j) > 1) {
+                    trees.add(new int[]{i, j, forest.get(i).get(j)});
+                }
+            }
+        }
+        int[] start = new int[];
+        int totalSteps = 0;
+        //retrive trees from the heap
+        while (!trees.isEmpty()) {
+            int[] tree = trees.poll();
+            int[] next = new int[]{tree[0], tree[1]};
+            int step = BFS(forest, start, next, m, n);
+            if (step == -1) {
+                return -1;
+            }
+            totalSteps += steps;
+            start = next;
+        }
+        return totalSteps;
+    }
+    static int[][] dir = new int[][]{{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+    private int BFS(List<List<Integer>> forest, int[] start, int[] next, int m, int n) {
+        boolean[][] visited = new boolean[m][n];
+        Queue<int[]> queue = new LinkedList<>();
+        queue.offer(start);
+        visited[start[0]][start[1]] = true;
+        int step = 0;
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            for (int i = 0; i < size; i++) {
+                int[] curr = queue.poll();
+                if (curr[0] == next[0] && curr[1] == next[1]) {
+                    return step;
+                }
+                for (int[] d : dir) {
+                    int nextX = curr[0] + d[0];
+                    int nextY = curr[1] + d[1]
+                    if (nextX < 0 || nextX >= m || nextY < 0 || nextY >= n || visited[nextX][nextY] || forest.get(nextX).get(nextY) == 0) {
+                        continue;
+                    }
+                    queue.offer(new int[]{nextX, nextY});
+                    visited[nextX][nextY] = true;
+                }
+            }
+            step++;
+        }
+        return -1;
+    }
+}
