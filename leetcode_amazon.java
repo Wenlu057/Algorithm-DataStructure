@@ -489,3 +489,57 @@ class AutocompleteSystem {
         }
     }
 }
+
+
+/*208. Implement Trie (Prefix Tree)*/
+
+//trie
+class Trie {
+
+    class TrieNode {
+        TrieNode[] next = new TrieNode[26];
+        String word;
+    }
+
+    TrieNode root;
+
+    public Trie() {
+        root = new TrieNode();
+    }
+
+    public void insert(String word) {
+        TrieNode t = root;
+        for (char c : word.toCharArray()) {
+            if (t.next[c - 'a'] == null) {
+                t.next[c - 'a'] = new TrieNode();
+            }
+            t = t.next[c - 'a'];
+        }
+        t.word = word;
+    }
+
+    public boolean search(String word) {
+        TrieNode t = root;
+        for (char c : word.toCharArray()) {
+            if (t.next[c - 'a'] == null) {
+                return false;
+            }
+            t = t.next[c - 'a'];
+        }
+        if (t.word != null && t.word.equals(word)) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean startsWith(String prefix) {
+        TrieNode t = root;
+        for (char c : word.toCharArray()) {
+            if (t.next[c - 'a'] == null) {
+                return false;
+            }
+            t = t.next[c - 'a'];
+        }
+        return true;
+    }
+}
