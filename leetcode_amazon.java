@@ -399,3 +399,93 @@ class Solution {
         String word;
     }
 }
+
+/*642. Design Search Autocomplete System*/
+
+
+//trie + dfs
+//use dfs to find all the paths with same prefix.
+
+class AutocompleteSystem {
+    TrieNode root;
+    public AutocompleteSystem(String[] sentences, int[] times) {
+        root = new TrieNode();
+        for (int i = 0; i < sentences.length; i++) {
+            insert(root, sentences[i], times[i]);
+        }
+    }
+    String curr_prefix = "";
+    public List<String> input(char c) {
+        List<String> res = new ArrayList<>();
+        if (c == '#') {
+            insert(root, curr_prefix, 1);
+            curr_prefix = "";
+        } else {
+            curr_prefix += c;
+            List<Node> list = lookup(root, curr_prefix);
+            Collections.sort(list, (a, b) -> (a.times == b.times ? a.sentence.compareTo(b.sentence) : b.times - a.times));
+            for (int i = 0; i < Math.min(3, list.size()); i++) {
+                res.add(list.get(i).sentence);
+            }
+        }
+        return res;
+
+    }
+    //take the curr_prefix, retrieve all the available sentences and its times.
+    private List<Node> lookup(TrieNode t, String prefix) {
+        List<Node> res = new ArrayList<>();
+        for (char c : prefix.toCharArray()) {
+            if (t.next[int_(c)] == null) {
+                return new ArrayList<>();
+            }
+            t = t.next[int_(c)];
+        }
+        // update the trie pointer to the last char in the prefix, dfs!
+        dfs(t, prefix, res);
+        return res;
+    }
+
+    private void dfs(TrieNode t, String sentence, List<Node> res) {
+        if (t.times > 0) {
+            res.add(new Node(sentence, t.times));
+//!!!!            return;
+        }
+        for (char i = 'a'; i <= 'z'; i++) {
+            if (t.next[i - 'a'] != null) {
+                dfs(t.next[i - 'a'], sentence + i, res);
+            }
+        }
+        if (t.next[26] != null) {
+            dfs(t.next[26], sentence + ' ', res);
+        }
+    }
+    //helper function to get the position in the trie
+    private int int_(char c) {
+        return c == ' ' ? 26 : c - 'a';
+    }
+    // add sentencess to the trie tree
+    private void insert(TrieNode t, String sentence, int times) {
+        for (char c : sentence.toCharArray()) {
+            if (t.next[int_(c)] == null) {
+                t.next[int_(c)] = new TrieNode();
+            }
+            t = root.next[int_(c)];
+        }
+        t.times += times;
+    }
+    //create a trie structure
+    class TrieNode {
+        TrieNode[] next = new TrieNode[27]; // incluedes blank space
+        int times = times;
+    }
+
+    //create a class to store sentences and its times
+    class Node {
+        String sentence;
+        int times;
+        Node(String s, int t) {
+            this.sentence = s;
+            this.times = t;
+        }
+    }
+}
