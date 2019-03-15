@@ -332,3 +332,70 @@ public class Solution {
         return dummy.next;
     }
 }
+
+/*23. Merge k Sorted Lists*/
+
+// refer to Algorithm-DataStructure/LinkedList.java
+
+
+/*103. Binary Tree Zigzag Level Order Traversal*/
+
+// refer to Algorithm-DataStructure/tree.java
+
+
+/*212. Word Search II*/
+
+//trie tree + dfs
+//dfs is backtracking, explore all possibilities, use dfs in graph needs to record all visiting cell
+//here mark # as visited, when backtracking, setback as original character
+
+class Solution {
+    public List<String> findWords(char[][] board, String[] words) {
+        List<String> res = new ArrayList<>();
+        TrieNode root = buildTrie(words);
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                dfs(board, i, j, root, res);
+            }
+        }
+        return res;
+
+    }
+    private void dfs(char[][] board, int i, int j, TrieNode node, List<String> res) {
+        if (i < 0 || j < 0 || i >= board.length || j >= board[0].length || node.next[board[i][j] - 'a'] == null || board[i][j] == '#') {
+            return;
+        }
+        char c = board[i][j];
+        node = node.next[c - 'a'];
+        if (node.word != null) {
+            res.add(node.word);
+            node.word == null;
+        }
+        board[i][j] = '#';
+        dfs(board, i - 1, j, node, res);
+        dfs(board, i, j - 1, node, res);
+        dfs(board, i + 1, j, node, res);
+        dfs(board, i, j + 1, node, res);
+        board[i][j] = c;
+
+    }
+
+    private TrieNode buildTrie(String[] words) {
+        TrieNode root = new TrieNode();
+        for (String word : words) {
+            TrieNode pt = root;
+            for (char c : word.toCharArray()) {
+                if (pt.next[c - 'a'] == null) {
+                    pt.next[c - 'a'] = new TrieNode();
+                }
+                pt = pt.next[c - 'a'];
+            }
+            pt.word = word;
+        }
+    }
+
+    class TrieNode {
+        TrieNode[] next = new TrieNode[26];
+        String word;
+    }
+}
