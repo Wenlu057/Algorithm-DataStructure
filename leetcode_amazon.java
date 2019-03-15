@@ -543,3 +543,52 @@ class Trie {
         return true;
     }
 }
+
+
+/*211. Add and Search Word - Data structure design*/
+
+// how to handle '.' ?
+// recursively traverse all paths, if it has one path, return true.
+
+class WordDictionary {
+    class TrieNode{
+        TrieNode[] next = new TrieNode[26];
+        String word = "";
+    }
+    TrieNode root;
+    public WordDictionary() {
+        root = new TrieNode();
+    }
+    public void addWord(String word) {
+        TrieNode t = root;
+        for (char c : word.toCharArray()) {
+            if (t.next[c - 'a'] == null) {
+                t.next[c - 'a'] = new TrieNode();
+            }
+            t = t.next[c - 'a'];
+        }
+        t.word = word;
+    }
+    public boolean search(String word) {
+
+    }
+
+    private boolean match(char[] chars, int index, TrieNode t) {
+        //index为word长度时， trie指针刚好指到最后一个字母的地方，也就是存word string的叶子节点。
+        if (index == chars.length) {
+            return !t.word.equals("");
+        }
+        if (chars[index] == '.') {
+            for (int i = 0; i < t.next.length; i++) {
+                if (t.next[i] != null) {
+                    if (match(chars, index  + 1, t.next[i])) {
+                        return true;
+                    }
+                }
+            }
+        } else {
+            return t.next[chars[index] - 'a'] != null && match(chars, index + 1, t.next[chars[index] - 'a']);
+        }
+        return false;
+    }
+}
