@@ -644,3 +644,46 @@ class Solution {
         return true;
     }
 }
+/*127. Word Ladder*/
+//bfs
+class Solution {
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        if (wordList == null || wordList.size() == 0) {
+            return 0;
+        }
+        Queue<String> q = new LinkedList<>();
+        q.add(beginWord);
+        boolean[] visited = new boolean[wordList.size()];
+        int level = 1;
+        while (!q.isEmpty()) {
+            int size = q.size();
+            for (int i = 0; i < size; i++) {
+                String word = q.poll();
+                if (word.equals(endWord)) {
+                    return level;
+                }
+                for (int j = 0; j < wordList.size(); j++) {
+                    if (visited[j] || !isTransferable(word, wordList.get(j))) {
+                        continue;;
+                    }
+                    q.add(wordList.get(j));
+                    visited[j] = true;
+                }
+            }
+            level++;
+        }
+        return 0;
+    }
+    private boolean isTransferable(String w1, String w2) {
+        int difference = w1.length();
+        for (int i = 0; i < w1.length(); i++) {
+            if (w1.charAt(i) == w2.charAt(i)) {
+                difference--;
+            }
+        }
+        if (difference == 1) {
+            return true;
+        }
+        return false;
+    }
+}
