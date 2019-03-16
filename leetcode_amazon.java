@@ -592,3 +592,55 @@ class WordDictionary {
         return false;
     }
 }
+
+/*336. Palindrome Pairs*/
+
+//Palindrom property, given some existed palindrom, expand to make a bigger palindrom
+//use hashmap for constant search.
+
+class Solution {
+    public List<List<Integer>> palindromePairs(String[] words) {
+        List<List<Integer>> res = new ArrayList<>();
+        if (words == null || words.length == 0) {
+            return res;
+        }
+        HashMap<String, Integer> map = new HashMap<>();
+        for (int i = 0; i < words.length; i++ ) {
+            map.put(words[i], i);
+        }
+        for (int i = 0; i < words.length; i++) {
+            for (int j = 0; j < words[i].length(); j++) {
+                String str1 = words[i].substring(0, j);
+                String str2 = words[i].substring(j);
+                if (isPalindrome(str1)) {
+                    String str2rvs = new StringBuilder(str2).reverse().toString();
+                    if (map.containsKey(str2rvs) && map.get(str2rvs) != i) {
+                        res.add(Arrays.asList(map.get(str2rvs), i));
+                    }
+                }
+                if (!str2.isEmpty() && isPalindrome(str2)) {
+                    String str1rvs = new StringBuilder(str1).reverse().toString();
+                    if (map.containsKey(str1rvs) && map.get(str1rvs) != i) {
+                        res.add(Arrays.asList(i, map.get(str1rvs)));
+                    }
+                }
+            }
+        }
+        return res;
+
+    }
+
+    private boolean isPalindrome(String word) {
+        char[] ch = word.toCharArray();
+        int start = 0;
+        int end = word.length() - 1;
+        while (start < end) {
+            if (ch[start] != ch[end]) {
+                return false;
+            }
+            start++;
+            end--;
+        }
+        return true;
+    }
+}
