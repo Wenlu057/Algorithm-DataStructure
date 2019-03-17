@@ -796,3 +796,64 @@ class Solution {
         return logs;
     }
 }
+
+
+/*347. Top K Frequent Elements*/
+
+// heap + hashmap
+
+class Solution {
+    public List<Integer> topKFrequent(int[] nums, int k) {
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            map.put(nums[i], map.getOrDefault(nums[i], 0) + 1);
+        }
+        PriorityQueue<Integer> minHeap = new PriorityQueue<>((a, b) -> (map.get(a) - map.get(b)));
+        for (int key : map.keySet()) {
+            minHeap.add(key);
+            if (minHeap.size() > k) {
+                minHeap.remove();
+            }
+        }
+        List<Integer> res = new ArrayList<>();
+        while (k-- > 0) {
+            res.add(minHeap.remove());
+        }
+        Collections.reverse(res);
+        return res;
+    }
+}
+
+
+/*373. Find K Pairs with Smallest Sums*/
+//heap, need observation, what is the next candidate
+/*维持一个小根堆，并使其永远保持size k
+* 刚开始的时候把（i， 0）pair都加进去， i<=k, 我们已知最小
+* pair一定是（0， 0），先将其poll出来把下一个candidte加进去
+* 不断从堆中poll出一个放入output并添加下个candidate，下一个
+* candidate就是第一个元素不变，第二个元素往上挪一个。
+* */
+
+class Solution {
+    public List<int[]> kSmallestPairs(int[] nums1, int[] nums2, int k) {
+        PriorityQueue<int[]> minHeap = new PriorityQueue<>((a, b) -> (a[0] + a[1] - b[0] - b[1]));
+        List<int[]> res = new ArrayList<>();
+        if (nums1.length == 0 || nums2.length == 0 || k == 0) {
+            return res;
+        }
+        // fisrt initialize the minHeap
+        for (int i = 0; i < Math.min(nums1.length, k); i++) {
+            minHeap.add(nums1[i], nums2[0], 0);
+        }
+
+        //remove one to output, add next candidate to heap
+        while (k-- > 0 && !minHeap.isEmpty()) {
+            int[] curr = minHeap.remove();
+            res.add(new int[]{curr[0], curr[1]});
+            if (curr[2] + 1 < nums2.length) {
+                minHeap.add(new int[]{curr[0], nums2[curr[2] + 1], curr[2] + 1});
+            }
+        }
+        return res;
+    }
+}
