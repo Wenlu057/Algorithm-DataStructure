@@ -687,3 +687,52 @@ class Solution {
         return false;
     }
 }
+
+/*909. Snakes and Ladders*/
+
+//bfs, how to map number to matrix index
+
+class Solution {
+    public int snakesAndLadders(int[][] board) {
+        int n = board.length;
+        Queue<Integer> q = new LinkedList<>();
+        boolean[] visited = new boolean[n * n + 1];
+        q.offer(1);
+        visited[1] = true;
+        int level = 0;
+        while (!q.isEmpty()) {
+            int size = q.size();
+            for (int i = 0; i < size; i++) {
+                int num = q.poll();
+                if (num == n * n) {
+                    return level;
+                }
+                for (int j = 1; j <= 6; j++) {
+                    int next = num + j;
+                    if (next > n * n) {
+                        continue;
+                    }
+                    int val = getBoardValue(board, next);
+                    if (value != -1) {
+                        next = val;
+                    }
+                    if (!visited[next]){
+                        visited[next] = true;
+                        q.offer(next);
+                    }
+                }
+            }
+            level++;
+        }
+        return -1;
+
+    }
+
+    private int getBoardValue(int[][] board, int num) {
+        int n = board.length;
+        int r = num - 1 / n;
+        int x =  n - r - 1;
+        int y = r % 2 == 0 ? num - r * n - 1 : n + r * n - num;
+        return board[x][y];
+    }
+}
