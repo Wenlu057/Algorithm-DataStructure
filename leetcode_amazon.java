@@ -765,3 +765,34 @@ class Solution {
         return dp[amount] == Integer.MAX_VALUE ? -1 : dp[amount];
     }
 }
+
+
+/*937. Reorder Log Files*/
+
+//custom sort
+
+class Solution {
+    public String[] reorderLogFiles(String[] logs) {
+        Arrays.sort(logs, (a, b) -> {
+            int idx1 = a.indexOf(' ') + 1;
+            int idx2 = b.indexOf(' ') + 1;
+            int ch1 = a.charAt(idx1);
+            int ch2 = b.charAt(idx2);
+            if (Characters.isLetter(ch1)) {
+                if (Characters.isLetter(ch2)) {
+                    return a.substring(idx1).compareTo(b.substring(idx2));
+                } else {
+                    return -1;
+                }
+
+            } else {
+                if (Characters.isLetter(ch2)) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+        });
+        return logs;
+    }
+}
