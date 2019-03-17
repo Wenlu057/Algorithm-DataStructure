@@ -736,3 +736,32 @@ class Solution {
         return board[x][y];
     }
 }
+
+
+/*Coin Change*/
+
+//dp, time: O(n * amount)
+//ask the min amount, dp can process this kinda question.
+//define transformation function: dp[i] = Math.min(dp[i], dp[i - coin] + 1);
+/*假设当前求的是dp[11]，也就是想要凑齐11块钱需要最少的硬币数量，
+* 当币种有一元，二元和五元的时候，外循环从一元遍历到五元， 五元这一行都是使用5元一次，
+* 想要凑齐11元，使用5元一次，还剩6元， 因为我们已经计算过想要凑齐6元所需要的最少
+* 的硬币数量（即使用一个5元，一个1元）， 我们将已知的子结果加上一个（5元）即3，我们
+* 还要将当前这个必须使用一个5元的结果与之前不需要使用五元的结果比较一下，将较小值保存。*/
+
+
+class Solution {
+    public int cointChange(int[] coins, int amount) {
+        int[] dp = new int[amount + 1];
+        Arrays.fill(dp, Integer.MAX_VALUE);
+        dp[0] = 0;
+        for (int coin : coins) {
+            for (int i = coin; i <= amount; i++) {
+                if (dp[i - coin] != Integer.MAX_VALUE) {
+                    dp[i] = Math.min(dp[i], dp[i - coin] + 1);
+                }
+            }
+        }
+        return dp[amount] == Integer.MAX_VALUE ? -1 : dp[amount];
+    }
+}
