@@ -857,3 +857,30 @@ class Solution {
         return res;
     }
 }
+
+
+/*703. Kth Largest Element in a Stream*/
+//priority q, kick out and maintain size k
+
+class Solution {
+    int k;
+    PriorityQueue<Integer> minHeap;
+    public KthLargest(int k, int[] nums) {
+        this.k = k;
+        minHeap = new PriorityQueue<>((a, b) -> (a - b));
+        for (int num : nums) {
+            minHeap.add(num);
+            if (minHeap.size() > k) {
+                minHeap.remove();
+            }
+        }
+
+    }
+    public int add(int val) {
+        minHeap.add(val);
+        if (minHeap.size() > k) {
+            minHeap.remove();
+        }
+        return minHeap.peek();
+    }
+}
