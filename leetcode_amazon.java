@@ -968,3 +968,30 @@ class Solution {
         addLeaves(root.right, res);
     }
 }
+
+/*763. Partition Labels*/
+//use an array to record the index of lastSeen
+//because only contains lowercase letter, the trick is we can create an array with length 26
+
+class Solution {
+    public List<Integer> partitionLabels(String S) {
+        List<Integer> res = new ArrayList<>();
+        int[] lastSeen = new int[26];
+
+        //update lastSeen arr
+        for (int i = 0; i < S.length(); i++) {
+            lastSeen[S.charAt(i) - 'a'] == i;
+        }
+
+        //two pointers
+        int start = 0, end = 0;
+        for (int i = 0; i < S.length(); i++) {
+            end = Math.max(end, lastSeen[S.charAt(i) - 'a']);
+            if (i == end) {
+                res.add(end - start + 1);
+                start = end + 1;
+            }
+        }
+        return res;
+    }
+}
