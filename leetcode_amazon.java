@@ -911,3 +911,60 @@ class Solution {
         return true;
     }
 }
+
+
+/*Boundary of Binary Tree*/
+
+class Solution {
+    public List<Integer> boundaryOfBinaryTree(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        if (root == null) {
+            return res;
+        }
+        if (!isLeaf(root)) {
+            res.add(root.val);
+        }
+        TreeNode pt = root.left;
+        while (pt != null) {
+            if (!isLeaf(pt)){
+                res.add(pt.val);
+            }
+            if (pt.left == null) {
+                pt = pt.right;
+            } else {
+                pt = pt.left;
+            }
+        }
+        addLeaves(root, res);
+        List<Integer> right = new ArrayList<>();
+        pt = root.right;
+        while (pt != null) {
+            if (!isLeaf(pt)) {
+                right.add(0, pt.val);
+            }
+            if (pt.right == null) {
+                pt = pt.left;
+            } else {
+                pt = pt.right;
+            }
+        }
+        for (int i = 0; i < right.size(); i++) {
+            res.add(right.get(i));
+        }
+        return res;
+    }
+    private boolean isLeaf(TreeNode root) {
+        return root.left == null && root.right == null;
+    }
+
+    private void addLeaves(TreeNode root, List<Integer> res) {
+        if (root == null) {
+            return;
+        }
+        if (root.left == null && root.right == null) {
+            res.add(root.val);
+        }
+        addLeaves(root.left, res);
+        addLeaves(root.right, res);
+    }
+}
