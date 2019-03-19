@@ -15,6 +15,68 @@ O(logn)
 
 // Binary Search Template
 
+//找第一个大于target的数
+public int binarySearch(int[] arr, int target) {
+        int low = 0;
+        int high = psum.size() - 1;
+        while (low < high) {
+            int mid = (low + high) / 2;
+            if (target >= target.get(mid)) { //若当前数等于target，我们要找第一个大于它的，所以当前肯定不是
+                low = mid + 1;
+            } else {
+                high = mid;
+            }
+        }
+        return low;
+}
+
+//找第一个大于或等于target的数 (模糊查找）， 或找target出现的首位置
+public int binarySearch(int[] arr, int target) {
+    int l = 0, r = arr.length;
+    while (l < r){ //退出条件是l和r相等
+        int mid = l + (r - l) / 2;
+        if (arr[mid] < target) {
+            l = mid + 1; //若当前数比target小，我们要找第一个相等或大于的数，我们知道当前数一定不是我们想要的
+        } else {
+            r = mid; //若当前数比target大或相等，我们不确定是否是第一个，所以不能排除; 因为是找第一个当碰到相等的应该扔掉右边继续往左找
+        }
+    }
+    //退出时l和r指向的是一个数， 只要保证能指向一个就不会死循环
+    return l;
+}
+
+//找最后一个等于target的数
+public int binarySearch(int[] arr, int target) {
+        int l = 0;
+        int r = A.length - 1;
+        while (l  < r) {
+            int mid = l + (r - l) / 2 + 1; //确保当只有两个时，mid = r，强制其更新避免死循环
+            if (A[mid] <= target) {
+                l = mid; // 若当前等于target，我们不确定是否是最后一个，因为是找最后一个所以把左边排除继续向右找
+            } else {
+                r = mid - 1;
+            }
+        }
+        return A[l] > A[r] ? l : r;
+}
+
+//在有序数组中找是否存在一个数（exact search）
+public int binarySearch(int[] arr, int target) {
+    int l = 0, r = arr.length;
+    while (l < r){ //退出条件是l和r相等
+        int mid = l + (r - l) / 2;
+        if (arr[mid] == target) {
+            return true;
+        } else if (arr[mid] < target) {
+            l = mid + 1; //若当前数比target小，我们要找相等的数，我们知道当前数一定不是我们想要的
+        } else {
+            r = mid + 1; //若当前数比target大，我们要找相等的数，我们知道当前数一定不是我们想要的
+        }
+    }
+    //退出时l和r指向的是一个，需要在判断一下
+    return arr[l] == target;
+}
+
 // Java implementation of iterative Binary Search
 class BinarySearch {
 	//Returns index of x if it is present in arr[], else return -1
